@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Welcome ♡</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      width: 100%;
+      height: 100vh;
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      background: white;
+      font-family: sans-serif;
+    }
+
+    .welcome {
+      text-align: center;
+      cursor: pointer;
+      user-select: none;
+
+      transition: transform 0.3s ease;
+    }
+
+    .welcome:hover {
+      transform: scale(1.05);
+    }
+
+    .bow {
+      font-size: 75px;
+      display: block;
+      margin-bottom: 12px;
+    }
+
+    .text {
+      font-size: 14px;
+      letter-spacing: 2px;
+      color: #777;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="welcome" onclick="goNext()">
+    <span class="bow">🎀</span>
+    <div class="text">กดเพื่อไปต่อ</div>
+  </div>
+
+  <script>
+    function goNext() {
+      // ไว้ใส่หน้าหลักทีหลัง
+      alert("กดแล้ว! 🎀");
+    }
+  </script>
+
+</body>
+</html>
