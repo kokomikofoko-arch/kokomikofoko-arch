@@ -17,16 +17,18 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            background: #faf8f5; /* โทนสีละมุนสะอาดตา */
+            background: #faf8f5;
             font-family: sans-serif;
             overflow: hidden;
+            position: relative;
         }
 
         .welcome-card {
             text-align: center;
             cursor: pointer;
             user-select: none;
-            transform: opacity 0.6s ease, transform 0.3s ease;
+            transition: transform 0.3s ease;
+            z-index: 10;
         }
 
         .welcome-card:hover {
@@ -45,7 +47,28 @@
             color: #777;
         }
 
-        /* เอฟเฟกต์เฟดตอนกด */
+        /* สไตล์สำหรับดาวกระจายที่ร่วงลงมา */
+        .falling-star {
+            position: absolute;
+            top: -50px;
+            font-size: 24px;
+            animation: fallDown 1s linear forwards;
+            z-index: 5;
+            user-select: none;
+        }
+
+        @keyframes fallDown {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(105vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* เอฟเฟกต์เฟดหน้าจอตอนท้าย */
         body.fade-out {
             opacity: 0;
             transition: opacity 0.6s ease;
@@ -61,16 +84,31 @@
 
     <script>
         function goToBio() {
-            // สั่งให้หน้าจอฟีด (Fade out) ก่อน
-            document.body.classList.add('fade-out');
-            
-            // รอให้แอนิเมชันเล่นจบ 0.6 วิ แล้วค่อยเด้งไปหน้าต่อไป
+            // สร้างดาวกระจายร่วงลงมาหลายๆ ดวงพร้อมกัน
+            for (let i = 0; i < 20; i++) {
+                let star = document.createElement('div');
+                star.className = 'falling-star';
+                star.innerHTML = '✨'; // เปลี่ยนเป็นไอคอนอื่นได้ เช่น 🌟 หรือ 💫
+                
+                // สุ่มตำแหน่งซ้ายขวาและเวลาความเร็วในการร่วง
+                star.style.left = Math.random() * window.innerWidth + 'px';
+                star.style.animationDuration = (0.5 + Math.random() * 0.8) + 's';
+                star.style.fontSize = (15 + Math.random() * 20) + 'px';
+                
+                document.body.appendChild(star);
+            }
+
+            // รอแป๊บเดียวให้ดาวร่วงแล้วค่อยเฟดเปลี่ยนหน้าไป bio.html
             setTimeout(function() {
-                // ตรง 'bio.html' ตรงนี้สามารถเปลี่ยนเป็นลิงก์หน้าเว็บไบโอหลักตัวจริงได้เลยนะ
+                document.body.classList.add('fade-out');
+            }, 500);
+
+            setTimeout(function() {
                 window.location.href = 'bio.html'; 
-            }, 600);
+            }, 1100);
         }
     </script>
 
 </body>
 </html>
+
