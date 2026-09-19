@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome 🫧</title>
+    <title>Welcome 🫧❄️</title>
     <style>
         * {
             box-sizing: border-box;
@@ -17,13 +17,12 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            background: #f4f8fb; /* พื้นหลังโทนฟ้าขาวละมุน */
+            background: #f4f8fb;
             font-family: sans-serif;
             overflow: hidden;
             position: relative;
         }
 
-        /* กรอบการ์ดหลัก คุมโทนฟ้า-น้ำเงิน-ขาว-ดำ */
         .welcome-card {
             position: relative;
             background: #ffffff;
@@ -38,9 +37,9 @@
                               linear-gradient(135deg, #0077b6, #48cae4, #90e0ef);
             background-origin: border-box;
             background-clip: padding-box, border-box;
+            width: 340px;
         }
 
-        /* ป้ายแท็กมุมการ์ด โทนฟ้า */
         .card-tag {
             position: absolute;
             top: -12px;
@@ -55,7 +54,7 @@
             box-shadow: 0 3px 10px rgba(0, 119, 182, 0.3);
         }
 
-        .bubble-icon {
+        .main-icon {
             font-size: 80px;
             display: block;
             margin-bottom: 25px;
@@ -64,20 +63,19 @@
             cursor: pointer;
         }
         
-        /* เอฟเฟกต์ตอนกดที่ฟองสบู่ */
-        .bubble-icon.active {
+        .main-icon.active {
             transform: scale(1.15);
         }
 
         .text {
-            font-size: 14px;
-            letter-spacing: 2px;
+            font-size: 13px;
+            letter-spacing: 1px;
             color: #1d3557;
             margin-bottom: 20px;
             font-weight: 500;
+            min-height: 20px;
         }
 
-        /* พื้นที่เกจพลัง โทนฟ้า */
         .power-meter-container {
             width: 100%;
             height: 14px;
@@ -88,7 +86,6 @@
             box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
         }
 
-        /* หลอดพลังงานสีฟ้าไล่เฉด */
         .power-meter-fill {
             height: 100%;
             width: 0%;
@@ -104,7 +101,6 @@
             margin-top: 8px;
         }
 
-        /* ข้อความ footer ด้านล่าง */
         .footer-text {
             position: absolute;
             bottom: 25px;
@@ -115,7 +111,6 @@
             z-index: 10;
         }
 
-        /* ดาวกระจายที่ระเบิดออก */
         .exploding-star {
             position: absolute;
             font-size: 20px;
@@ -135,7 +130,6 @@
             }
         }
 
-        /* เอฟเฟกต์เฟดหน้าจอตอนท้าย */
         body.fade-out {
             opacity: 0;
             transition: opacity 0.6s ease;
@@ -146,36 +140,59 @@
 
     <div class="welcome-card">
         <div class="card-tag">WELCOME</div>
-        <span class="bubble-icon" id="bubbleBtn">🫧</span>
-        <div class="text">จิ้มให้เต็ม...เพื่อไปต่อ</div>
+        <span class="main-icon" id="interactiveBtn">🫧</span>
+        <div class="text" id="statusText">จิ้มให้เต็ม...เพื่อไปต่อ</div>
         <div class="power-meter-container">
             <div class="power-meter-fill" id="powerFill"></div>
         </div>
-        <div class="click-instruction">คลิกที่ฟองสบู่รัวๆ!</div>
+        <div class="click-instruction" id="subInstruction">คลิกที่ฟองสบู่รัวๆ!</div>
     </div>
 
     <div class="footer-text">est. 2026  ·  made with ♡</div>
 
     <script>
-        const bubbleBtn = document.getElementById('bubbleBtn');
+        const interactiveBtn = document.getElementById('interactiveBtn');
         const powerFill = document.getElementById('powerFill');
+        const statusText = document.getElementById('statusText');
+        const subInstruction = document.getElementById('subInstruction');
         const body = document.body;
-        let currentPower = 0;
-        const maxPower = 10; 
+
+        let currentClick = 0;
+        const totalSteps = 13; // 10 รอบฟองสบู่ + 3 รอบหิมะกวนๆ
         let isCompleted = false;
 
-        bubbleBtn.addEventListener('click', function() {
+        interactiveBtn.addEventListener('click', function() {
             if (isCompleted) return;
 
-            this.classList.add('active');
-            setTimeout(() => this.classList.remove('active'), 100);
+            interactiveBtn.classList.add('active');
+            setTimeout(() => interactiveBtn.classList.remove('active'), 100);
 
-            currentPower++;
-            let percentage = (currentPower / maxPower) * 100;
-            powerFill.style.width = percentage + '%';
+            currentClick++;
 
-            if (currentPower >= maxPower) {
+            // คำนวณหลอดพลัง (คิดจาก 10 ขั้นแรก)
+            let fillProgress = Math.min(currentClick, 10) / 10 * 100;
+            powerFill.style.width = fillProgress + '%';
+
+            // จัดการข้อความตามสเต็ป
+            if (currentClick <= 10) {
+                statusText.innerText = `จิ้มให้เต็ม...เพื่อไปต่อ (${currentClick}/10)`;
+                if (currentClick === 10) {
+                    // เปลี่ยนร่างเป็นเกล็ดหิมะ ❄️ เข้าสู่ 3 รอบสุดท้าย
+                    interactiveBtn.innerText = '❄️';
+                    statusText.innerText = 'เอ๊ะ เกือบละ... ขออีกนิดนึงน่า';
+                    subInstruction.innerText = 'เก็บเกล็ดหิมะแรกกัน!';
+                }
+            } else if (currentClick === 11) {
+                statusText.innerText = 'แหน่... ยังไม่ยอมให้ไปหรอก 🤭';
+                subInstruction.innerText = 'กดอีกรอบสิ เจ้ามนุษย์!';
+            } else if (currentClick === 12) {
+                statusText.innerText = 'แกล้งเฉยๆ หรอกหน่า อีกทีๆ ✨';
+                subInstruction.innerText = 'ครั้งสุดท้ายจริงๆ แล้ว!';
+            } else if (currentClick >= 13) {
                 isCompleted = true;
+                statusText.innerText = 'ปิ๊ง! ไปลุยกันเลย 🚀';
+                subInstruction.innerText = 'กำลังพาไปหน้าไบโอ...';
+                
                 explodeStars();
                 
                 setTimeout(function() {
@@ -189,7 +206,7 @@
         });
 
         function explodeStars() {
-            const cardRect = bubbleBtn.getBoundingClientRect();
+            const cardRect = interactiveBtn.getBoundingClientRect();
             const centerX = cardRect.left + cardRect.width / 2;
             const centerY = cardRect.top + cardRect.height / 2;
 
