@@ -31,7 +31,6 @@
             --card-bg: #ffffff;
             --text-color: #1d3557;
             --sub-text: #6c757d;
-            --meter-bg: #e2eafc;
             --tag-bg: #0077b6;
             --border-gradient: linear-gradient(135deg, #0077b6, #48cae4, #90e0ef);
             --card-shadow: 0 10px 30px rgba(0, 119, 182, 0.08);
@@ -43,7 +42,6 @@
             --card-bg: #111d2d;
             --text-color: #e2eafc;
             --sub-text: #8d99ae;
-            --meter-bg: #1d2d44;
             --tag-bg: #48cae4;
             --border-gradient: linear-gradient(135deg, #48cae4, #0077b6, #1d3557);
             --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
@@ -117,69 +115,18 @@
         }
 
         .main-icon {
-            font-size: 80px;
+            font-size: 70px;
             display: inline-block;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
             filter: drop-shadow(0 5px 10px rgba(0,119,182,0.15));
-            transition: transform 0.1s ease;
-            cursor: pointer;
-            position: relative;
-            -webkit-tap-highlight-color: transparent;
-        }
-        
-        .main-icon.active {
-            transform: scale(1.15);
         }
 
         .text {
             font-size: 13px;
             letter-spacing: 1px;
             color: var(--text-color);
-            margin-bottom: 20px;
+            margin-bottom: 25px;
             font-weight: 500;
-            min-height: 20px;
-        }
-
-        .power-meter-container {
-            width: 100%;
-            height: 14px;
-            background: var(--meter-bg);
-            border-radius: 7px;
-            overflow: hidden;
-            margin-top: 10px;
-            box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
-        }
-
-        .power-meter-fill {
-            height: 100%;
-            width: 0%;
-            background: linear-gradient(90deg, #0077b6, #48cae4);
-            border-radius: 7px;
-            transition: width 0.2s ease-out;
-        }
-
-        .click-instruction {
-            font-size: 11px;
-            color: var(--sub-text);
-            letter-spacing: 1px;
-            margin-top: 8px;
-        }
-
-        .footer-text {
-            margin-top: 25px;
-            font-size: 11px;
-            letter-spacing: 1.5px;
-            color: var(--sub-text);
-            user-select: none;
-            z-index: 10;
-        }
-
-        .bio-choice-box {
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            gap: 15px;
-            margin-top: 5px;
         }
 
         .choice-buttons {
@@ -192,7 +139,7 @@
         }
 
         .choice-btn {
-            padding: 8px 18px;
+            padding: 10px 22px;
             border-radius: 20px;
             font-size: 12px;
             font-weight: bold;
@@ -211,9 +158,18 @@
         }
 
         .btn-not {
-            background: var(--meter-bg);
-            color: var(--sub-text);
+            background: #e2eafc;
+            color: #6c757d;
             transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        .footer-text {
+            margin-top: 25px;
+            font-size: 11px;
+            letter-spacing: 1.5px;
+            color: var(--sub-text);
+            user-select: none;
+            z-index: 10;
         }
 
         .pet-container {
@@ -239,57 +195,11 @@
             border: 1px solid var(--sub-text);
             max-width: 160px;
             text-align: right;
-            animation: bounceBubble 2s ease-in-out infinite alternate;
-            opacity: 0.95;
-        }
-
-        @keyframes bounceBubble {
-            0% { transform: translateY(0); }
-            100% { transform: translateY(-4px); }
         }
 
         .pet-avatar {
             font-size: 38px;
             filter: drop-shadow(0 3px 6px rgba(0,0,0,0.15));
-            animation: petIdle 1.5s ease-in-out infinite alternate;
-        }
-
-        @keyframes petIdle {
-            0% { transform: translateY(0) rotate(-3deg); }
-            100% { transform: translateY(-6px) rotate(3deg); }
-        }
-
-        .scattered-snow {
-            position: absolute;
-            font-size: 32px;
-            cursor: pointer;
-            z-index: 20;
-            animation: floatSlow 2s ease-in-out infinite alternate;
-            filter: drop-shadow(0 4px 8px rgba(0,119,182,0.2));
-            transition: transform 0.2s, opacity 0.2s;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        .scattered-snow:hover {
-            transform: scale(1.3);
-        }
-
-        @keyframes floatSlow {
-            0% { transform: translateY(0px) rotate(0deg); }
-            100% { transform: translateY(-8px) rotate(15deg); }
-        }
-
-        .exploding-star {
-            position: absolute;
-            font-size: 20px;
-            animation: burstOut 0.8s ease-out forwards;
-            z-index: 5;
-            pointer-events: none;
-        }
-
-        @keyframes burstOut {
-            0% { transform: translate(0, 0) scale(1) rotate(0deg); opacity: 1; }
-            100% { transform: translate(var(--tx), var(--ty)) scale(0.1) rotate(720deg); opacity: 0; }
         }
 
         body.fade-out {
@@ -301,102 +211,43 @@
 <body class="light-theme">
 
     <div class="welcome-card" id="welcomeCard">
-        <button class="theme-toggle" id="themeToggleBtn" title="เปลี่ยนธีม">🌙</button>
+        <button class="theme-toggle" id="themeToggleBtn">🌙</button>
         <div class="card-tag">WELCOME</div>
         
-        <span class="main-icon" id="interactiveBtn">🫧</span>
-        <div class="text" id="statusText">จิ้มฟองสบู่รัวๆ เลย!</div>
-        <div class="power-meter-container" id="meterBox">
-            <div class="power-meter-fill" id="powerFill"></div>
-        </div>
-        <div class="click-instruction" id="subInstruction">กดที่ฟองสบู่ให้ครบ 10 ครั้ง</div>
-
-        <div class="bio-choice-box" id="bioChoiceBox">
-            <div class="text" id="questionText" style="margin-bottom: 5px;">อยากเห็นไบโอเรารึเปล่าาา กดสิ 🤭</div>
-            <div class="choice-buttons">
-                <button class="choice-btn btn-not" id="btnNot">ไม่อยาก</button>
-                <button class="choice-btn btn-want" id="btnWant">อยาก</button>
-            </div>
+        <div class="main-icon">🫧❄️</div>
+        <div class="text" id="statusText">อยากเห็นไบโอเรารึเปล่าาา กดสิ 🤭</div>
+        
+        <div class="choice-buttons">
+            <button class="choice-btn btn-not" id="btnNot">ไม่อยาก</button>
+            <button class="choice-btn btn-want" id="btnWant">อยาก</button>
         </div>
     </div>
 
-    <div class="pet-container" id="petBox" title="จิ้มน้องสิ!">
-        <div class="pet-speech-bubble" id="petSpeech">แง้ม... จิ้มฟองสบู่ยังอะ? 🐾</div>
+    <div class="pet-container" id="petBox">
+        <div class="pet-speech-bubble" id="petSpeech">เลือกดีๆ น้า 🐾</div>
         <div class="pet-avatar" id="petAvatar">🐰</div>
     </div>
 
     <div class="footer-text">est. 2026  ·  made with ♡</div>
 
     <script>
+        // หิมะโปรยฉากหลัง
         function createAmbientSnow() {
             const snow = document.createElement('div');
             snow.className = 'ambient-snow';
             snow.innerHTML = Math.random() > 0.5 ? '❄️' : '✨';
             snow.style.left = Math.random() * 100 + 'vw';
             snow.style.fontSize = (12 + Math.random() * 16) + 'px';
-            
             const duration = 4 + Math.random() * 6;
             snow.style.animationDuration = duration + 's';
-            
             document.body.appendChild(snow);
             setTimeout(() => snow.remove(), duration * 1000);
         }
         setInterval(createAmbientSnow, 400);
 
-        // ระบบเสียง (ปลอดภัยแม้เบราว์เซอร์มือถือบล็อกออโต้เพลย์)
-        let audioCtx = null;
-        function initAudio() {
-            if (!audioCtx) {
-                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            }
-            if (audioCtx.state === 'suspended') {
-                audioCtx.resume();
-            }
-        }
-
-        function playPopSound() {
-            try {
-                initAudio();
-                let osc = audioCtx.createOscillator();
-                let gain = audioCtx.createGain();
-                osc.connect(gain);
-                gain.connect(audioCtx.destination);
-                
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(400, audioCtx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(800, audioCtx.currentTime + 0.08);
-                
-                gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.08);
-                
-                osc.start();
-                osc.stop(audioCtx.currentTime + 0.08);
-            } catch (e) {
-                // ข้ามถ้าเบราว์เซอร์ไม่รองรับเสียง
-            }
-        }
-
-        const statusText = document.getElementById('statusText');
-        const subInstruction = document.getElementById('subInstruction');
-        const hour = new Date().getHours();
-        
-        let timeGreeting = "จิ้มฟองสบู่รัวๆ เลย!";
-        if (hour >= 0 && hour < 5) {
-            timeGreeting = "ดึกมากแล้วนะ นอนยังเนี่ย 🌙";
-        } else if (hour >= 5 && hour < 12) {
-            timeGreeting = "อรุณสวัสดิ์! วันนี้สดใสนะ ☀️";
-        } else if (hour >= 12 && hour < 17) {
-            timeGreeting = "ยามบ่ายแล้ว สู้ๆ นะ! ✨";
-        } else if (hour >= 17 && hour < 21) {
-            timeGreeting = "ค่ำแล้ว พักผ่อนกัน 🌆";
-        } else {
-            timeGreeting = "ดึกแล้วยังไม่นอนอีกนะ 🌙";
-        }
-        statusText.innerText = timeGreeting;
-
+        // เปลี่ยนธีม
         const themeToggleBtn = document.getElementById('themeToggleBtn');
         const bodyTag = document.body;
-
         themeToggleBtn.addEventListener('click', function(e) {
             e.stopPropagation();
             if (bodyTag.classList.contains('light-theme')) {
@@ -410,140 +261,50 @@
             }
         });
 
+        // น้องต่ายพูดคุย
         const petBox = document.getElementById('petBox');
         const petSpeech = document.getElementById('petSpeech');
-        const petAvatar = document.getElementById('petAvatar');
-        
         const petLines = [
-            "สวัสดีเจ้ามนุษย์! 🐾",
+            "จิ้มปุ่ม 'อยาก' สิรออะไรอยู่ 🤭",
             "Faber est quisque fortunae suae ✨",
-            "กดฟองสบู่ข้างบนเร้ว 🫧",
-            "Privet! ทักทายแบบรัสเซีย 😎",
-            "Konnichiwa! ยินดีต้อนรับจ้า 🌸"
+            "แอบลังเลเหรอเนี่ย ฮ่าๆๆ 🐾",
+            "กดปุ่ม 'ไม่อยาก' ระวังหายนะ! 👻"
         ];
-
         petBox.addEventListener('click', function() {
-            let randomLine = petLines[Math.floor(Math.random() * petLines.length)];
-            petSpeech.innerText = randomLine;
-            petAvatar.style.transform = 'scale(1.3) rotate(-15deg)';
-            setTimeout(() => {
-                petAvatar.style.transform = 'scale(1) rotate(0deg)';
-            }, 200);
+            petSpeech.innerText = petLines[Math.floor(Math.random() * petLines.length)];
         });
 
-        const interactiveBtn = document.getElementById('interactiveBtn');
-        const powerFill = document.getElementById('powerFill');
-        const welcomeCard = document.getElementById('welcomeCard');
-        const meterBox = document.getElementById('meterBox');
-        const bioChoiceBox = document.getElementById('bioChoiceBox');
+        // ปุ่มไม่อยาก (กดแล้วเฟดหาย)
         const btnNot = document.getElementById('btnNot');
-        const btnWant = document.getElementById('btnWant');
-
-        let currentClick = 0;
-        const maxPower = 10; 
-        let phase = 1; 
-        let snowCollected = 0;
-
-        // รองรับทั้งคลิกและทัชสกรีนบนมือถือแบบชัวร์ๆ
-        interactiveBtn.addEventListener('pointerdown', function(e) {
-            e.preventDefault();
-            if (phase !== 1) return; 
-
-            playPopSound();
-            interactiveBtn.classList.add('active');
-            setTimeout(() => interactiveBtn.classList.remove('active'), 100);
-
-            currentClick++;
-            let fillProgress = (currentClick / maxPower) * 100;
-            powerFill.style.width = fillProgress + '%';
-
-            statusText.innerText = `สะสมพลัง (${currentClick}/10)`;
-
-            if (currentClick >= maxPower) {
-                phase = 2;
-                interactiveBtn.innerText = '❄️';
-                statusText.innerText = 'เอ๊ะ! มีเกล็ดหิมะหล่นมา 3 ดวง 🧊';
-                subInstruction.innerText = 'จิ้มเก็บหิมะรอบๆ หน้าจอให้ครบสิ!';
-                petSpeech.innerText = 'หิมะตกแล้ว! ตามเก็บเร้ว ❄️';
-                spawnSnowflakes();
-            }
+        btnNot.addEventListener('click', function() {
+            btnNot.style.opacity = '0';
+            btnNot.style.transform = 'scale(0.5)';
+            petSpeech.innerText = 'อ้าว ปุ่มหายซะแล้ว เหลือแค่อยากแล้วนะ 🤭';
+            setTimeout(() => btnNot.style.display = 'none', 500);
         });
 
-        function spawnSnowflakes() {
-            const coords = [
-                { x: '15vw', y: '20vh' },
-                { x: '75vw', y: '75vh' },
-                { x: '75vw', y: '20vh' }
-            ];
-
-            coords.forEach((pos) => {
-                let snow = document.createElement('div');
-                snow.className = 'scattered-snow';
-                snow.innerHTML = '❄️';
-                snow.style.left = pos.x;
-                snow.style.top = pos.y;
-
-                snow.addEventListener('pointerdown', function(e) {
-                    e.preventDefault();
-                    snow.remove();
-                    snowCollected++;
-
-                    if (snowCollected === 1) {
-                        statusText.innerText = 'เก่งมาก เหลืออีก 2 ดวง 🤭';
-                        petSpeech.innerText = 'เก่งมาก เก็บอีก 2 ดวง!';
-                    } else if (snowCollected === 2) {
-                        statusText.innerText = 'เกือบครบละ ใกล้ละ ✨';
-                        petSpeech.innerText = 'อีกดวงเดียว สู้ๆ!';
-                    } else if (snowCollected === 3) {
-                        phase = 3;
-                        statusText.style.display = 'none';
-                        subInstruction.style.display = 'none';
-                        meterBox.style.display = 'none';
-                        interactiveBtn.style.display = 'none';
-                        
-                        bioChoiceBox.style.display = 'flex';
-                        petSpeech.innerText = 'เลือกดีๆ นะ จะยอมให้ดูมั้ยน้า 🤭';
-                    }
-                });
-
-                document.body.appendChild(snow);
-            });
-        }
-
+        // ปุ่มอยาก (วิ่งหนี 5 รอบแล้วพาไปหน้า bio.html)
+        const btnWant = document.getElementById('btnWant');
         let runAwayCount = 0;
         const maxRunAway = 5;
 
-        btnNot.addEventListener('pointerdown', function(e) {
-            e.preventDefault();
-            btnNot.style.opacity = '0';
-            btnNot.style.transform = 'scale(0.5)';
-            petSpeech.innerText = 'อ้าว หายไปซะแล้ว ฮ่าๆๆ 🤭';
-            setTimeout(() => {
-                btnNot.style.display = 'none';
-            }, 500);
-        });
-
-        btnWant.addEventListener('pointerdown', function(e) {
-            e.preventDefault();
+        btnWant.addEventListener('click', function(e) {
             if (runAwayCount < maxRunAway) {
                 runAwayCount++;
-                playPopSound();
-
-                const randomX = (Math.random() - 0.5) * 150;
+                const randomX = (Math.random() - 0.5) * 140;
                 const randomY = (Math.random() - 0.5) * 40;
-                
                 btnWant.style.transform = `translate(${randomX}px, ${randomY}px)`;
                 
                 const teasingLines = [
                     "แหนะ จับไม่ได้หรอก 😜",
-                    "เร็วอีกนิดสิ! 🏃‍♂️",
-                    "เกือบโดนแล้วนะ ฮ่าๆๆ ✨",
-                    "ใจเย็นๆ ค่อยๆ จิ้ม 🤭",
-                    "รอบสุดท้ายแล้วนะ เตรียมตัว! 🚀"
+                    "เร็วกว่านี้อีกนิดสิ! 🏃‍♂️",
+                    "เกือบโดนแล้ว ฮ่าๆๆ ✨",
+                    "ใจเย็นๆ ค่อยๆ เล็ง 🤭",
+                    "รอบสุดท้ายแล้ว เตรียมตัวไป! 🚀"
                 ];
                 petSpeech.innerText = teasingLines[runAwayCount - 1];
             } else {
-                petSpeech.innerText = 'ยอมแล้ว ไปดูกันเลย! 🚀';
+                petSpeech.innerText = 'เก่งมาก ไปดูกันเลย! 🚀';
                 bodyTag.classList.add('fade-out');
                 setTimeout(function() {
                     window.location.href = 'bio.html';
@@ -551,6 +312,5 @@
             }
         });
     </script>
-
 </body>
 </html>
