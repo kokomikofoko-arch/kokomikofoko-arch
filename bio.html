@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome 🤍</title>
+    <title>Welcome 🫧</title>
     <style>
         * {
             box-sizing: border-box;
@@ -17,13 +17,13 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            background: #faf8f5;
+            background: #f4f8fb; /* พื้นหลังโทนฟ้าขาวละมุน */
             font-family: sans-serif;
             overflow: hidden;
             position: relative;
         }
 
-        /* กรอบการ์ดหลัก */
+        /* กรอบการ์ดหลัก คุมโทนฟ้า-น้ำเงิน-ขาว-ดำ */
         .welcome-card {
             position: relative;
             background: #ffffff;
@@ -31,75 +31,91 @@
             border-radius: 30px;
             text-align: center;
             user-select: none;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 10px 30px rgba(0, 119, 182, 0.08);
             z-index: 10;
             border: 2px solid transparent;
             background-image: linear-gradient(#ffffff, #ffffff), 
-                              linear-gradient(135deg, #a2d2ff, #ffafcc, #bde0fe);
+                              linear-gradient(135deg, #0077b6, #48cae4, #90e0ef);
             background-origin: border-box;
             background-clip: padding-box, border-box;
         }
 
-        .bow-icon {
+        /* ป้ายแท็กมุมการ์ด โทนฟ้า */
+        .card-tag {
+            position: absolute;
+            top: -12px;
+            right: 20px;
+            background: #0077b6;
+            color: #fff;
+            font-size: 10px;
+            padding: 3px 10px;
+            border-radius: 20px;
+            letter-spacing: 1px;
+            font-weight: bold;
+            box-shadow: 0 3px 10px rgba(0, 119, 182, 0.3);
+        }
+
+        .bubble-icon {
             font-size: 80px;
             display: block;
             margin-bottom: 25px;
-            filter: drop-shadow(0 5px 10px rgba(0,0,0,0.05));
+            filter: drop-shadow(0 5px 10px rgba(0,119,182,0.15));
             transition: transform 0.1s ease;
+            cursor: pointer;
         }
         
-        /* เอฟเฟกต์ตอนกดที่โบว์ */
-        .bow-icon.active {
+        /* เอฟเฟกต์ตอนกดที่ฟองสบู่ */
+        .bubble-icon.active {
             transform: scale(1.15);
         }
 
         .text {
             font-size: 14px;
             letter-spacing: 2px;
-            color: #777;
+            color: #1d3557;
             margin-bottom: 20px;
+            font-weight: 500;
         }
 
-        /* พื้นที่เกจพลัง */
+        /* พื้นที่เกจพลัง โทนฟ้า */
         .power-meter-container {
             width: 100%;
             height: 14px;
-            background: #eee;
+            background: #e2eafc;
             border-radius: 7px;
             overflow: hidden;
             margin-top: 10px;
-            box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
         }
 
-        /* หลอดพลังงาน */
+        /* หลอดพลังงานสีฟ้าไล่เฉด */
         .power-meter-fill {
             height: 100%;
-            width: 0%; /* เริ่มต้นที่ 0 */
-            background: linear-gradient(90deg, #a2d2ff, #ffafcc);
+            width: 0%;
+            background: linear-gradient(90deg, #0077b6, #48cae4);
             border-radius: 7px;
-            transition: width 0.4s ease-out; /* ทำให้หลอดวิ่งนุ่มนวล */
+            transition: width 0.4s ease-out;
         }
 
-        /* ข้อความบอกให้จิ้ม */
         .click-instruction {
             font-size: 11px;
-            color: #aaa;
+            color: #6c757d;
             letter-spacing: 1px;
             margin-top: 8px;
         }
 
-        /* ข้อความ footer เล็กๆ ด้านล่าง */
+        /* ข้อความ footer ด้านล่าง */
         .footer-text {
             position: absolute;
             bottom: 25px;
             font-size: 11px;
             letter-spacing: 1.5px;
-            color: #aaa;
+            color: #6c757d;
             user-select: none;
             z-index: 10;
         }
 
-        /* สไตล์สำหรับดาวกระจายที่ระเบิดออก */
+        /* ดาวกระจายที่ระเบิดออก */
         .exploding-star {
             position: absolute;
             font-size: 20px;
@@ -129,43 +145,39 @@
 <body>
 
     <div class="welcome-card">
-        <span class="bow-icon" id="bowBtn">🎀</span>
+        <div class="card-tag">WELCOME</div>
+        <span class="bubble-icon" id="bubbleBtn">🫧</span>
         <div class="text">จิ้มให้เต็ม...เพื่อไปต่อ</div>
         <div class="power-meter-container">
             <div class="power-meter-fill" id="powerFill"></div>
         </div>
-        <div class="click-instruction">คลิกที่โบว์รัวๆ!</div>
+        <div class="click-instruction">คลิกที่ฟองสบู่รัวๆ!</div>
     </div>
 
-    <!-- ข้อความเล็กๆ ด้านล่าง -->
     <div class="footer-text">est. 2026  ·  made with ♡</div>
 
     <script>
-        const bowBtn = document.getElementById('bowBtn');
+        const bubbleBtn = document.getElementById('bubbleBtn');
         const powerFill = document.getElementById('powerFill');
         const body = document.body;
         let currentPower = 0;
-        const maxPower = 10; // จำนวนครั้งที่ต้องคลิก
+        const maxPower = 10; 
         let isCompleted = false;
 
-        bowBtn.addEventListener('click', function() {
+        bubbleBtn.addEventListener('click', function() {
             if (isCompleted) return;
 
-            // เพิ่มเอฟเฟกต์กด
             this.classList.add('active');
             setTimeout(() => this.classList.remove('active'), 100);
 
-            // เพิ่มพลังทีละนิด
             currentPower++;
             let percentage = (currentPower / maxPower) * 100;
             powerFill.style.width = percentage + '%';
 
-            // ตรวจสอบว่าพลังเต็มหรือยัง
             if (currentPower >= maxPower) {
                 isCompleted = true;
-                explodeStars(); // ระเบิดดาว
+                explodeStars();
                 
-                // รอให้ระเบิดจบ แล้วเฟดเปลี่ยนหน้า
                 setTimeout(function() {
                     body.classList.add('fade-out');
                 }, 500);
@@ -176,9 +188,8 @@
             }
         });
 
-        // ฟังก์ชันสร้างดาวระเบิด
         function explodeStars() {
-            const cardRect = bowBtn.getBoundingClientRect();
+            const cardRect = bubbleBtn.getBoundingClientRect();
             const centerX = cardRect.left + cardRect.width / 2;
             const centerY = cardRect.top + cardRect.height / 2;
 
@@ -187,13 +198,11 @@
                 star.className = 'exploding-star';
                 star.innerHTML = '✨';
 
-                // สุ่มตำแหน่งปลายทาง
                 const angle = Math.random() * Math.PI * 2;
                 const distance = 80 + Math.random() * 100;
                 const tx = Math.cos(angle) * distance;
                 const ty = Math.sin(angle) * distance;
 
-                // กำหนดตัวแปร CSS สำหรับ Animation
                 star.style.setProperty('--tx', `${tx}px`);
                 star.style.setProperty('--ty', `${ty}px`);
                 star.style.left = centerX - 10 + 'px';
@@ -202,7 +211,6 @@
 
                 document.body.appendChild(star);
 
-                // ลบดาวออกจาก DOM เมื่อจบ Animation
                 setTimeout(() => {
                     star.remove();
                 }, 1000);
