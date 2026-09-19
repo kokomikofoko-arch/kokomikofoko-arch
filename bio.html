@@ -36,6 +36,7 @@
             --border-gradient: linear-gradient(135deg, #0077b6, #48cae4, #90e0ef);
             --card-shadow: 0 10px 30px rgba(0, 119, 182, 0.08);
             --pet-bg: #ffffff;
+            --input-bg: #f8f9fa;
         }
 
         body.dark-theme {
@@ -48,6 +49,7 @@
             --border-gradient: linear-gradient(135deg, #48cae4, #0077b6, #1d3557);
             --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
             --pet-bg: #16263d;
+            --input-bg: #1a2a42;
         }
 
         .ambient-snow {
@@ -172,6 +174,44 @@
             color: var(--sub-text);
             user-select: none;
             z-index: 10;
+        }
+
+        /* ด่าน Captcha ลับ */
+        .captcha-box {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            margin-top: 5px;
+        }
+
+        .captcha-input {
+            width: 100%;
+            padding: 10px 14px;
+            border-radius: 12px;
+            border: 1px solid var(--sub-text);
+            background: var(--input-bg);
+            color: var(--text-color);
+            font-size: 12px;
+            text-align: center;
+            outline: none;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .captcha-btn {
+            background: #0077b6;
+            color: #fff;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 3px 10px rgba(0,119,182,0.2);
+            transition: transform 0.2s;
+        }
+        .captcha-btn:active {
+            transform: scale(0.95);
         }
 
         .bio-choice-box {
@@ -310,6 +350,16 @@
             opacity: 0;
             transition: opacity 0.6s ease;
         }
+
+        /* เอฟเฟกต์กล่องสั่นเวลาตอบผิด */
+        @keyframes shakeBox {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-6px); }
+            40%, 80% { transform: translateX(6px); }
+        }
+        .shake {
+            animation: shakeBox 0.4s ease-in-out;
+        }
     </style>
 </head>
 <body class="light-theme">
@@ -325,6 +375,14 @@
         </div>
         <div class="click-instruction" id="subInstruction">คลิกที่ฟองสบู่รัวๆ!</div>
 
+        <!-- ด่าน Captcha ลับ -->
+        <div class="captcha-box" id="captchaBox">
+            <div class="text" id="captchaPrompt" style="margin-bottom: 0;">ด่านตรวจคนเข้าเมือง: พิมพ์คำว่า "อยากดู" เพื่อไปต่อ</div>
+            <input type="text" class="captcha-input" id="captchaInput" placeholder="พิมพ์คำตอบตรงนี้...">
+            <button class="captcha-btn" id="captchaSubmit">ยืนยัน</button>
+        </div>
+
+        <!-- กล่องเลือกคำถามสุดท้าย -->
         <div class="bio-choice-box" id="bioChoiceBox">
             <div class="text" id="questionText" style="margin-bottom: 5px;">อยากเห็นไบโอเรารึเปล่าาา กดสิ 🤭</div>
             <div class="choice-buttons">
@@ -342,7 +400,6 @@
     <div class="footer-text">est. 2026  ·  made with ♡</div>
 
     <script>
-        // 1. หิมะโปรยฉากหลัง
         function createAmbientSnow() {
             const snow = document.createElement('div');
             snow.className = 'ambient-snow';
@@ -356,7 +413,6 @@
         }
         setInterval(createAmbientSnow, 400);
 
-        // ระบบเสียงป๊อป
         let audioCtx = null;
         function initAudio() {
             if (!audioCtx) {
@@ -384,7 +440,6 @@
             } catch (e) {}
         }
 
-        // ทักทายตามเวลา
         const statusText = document.getElementById('statusText');
         const subInstruction = document.getElementById('subInstruction');
         const hour = new Date().getHours();
@@ -396,7 +451,6 @@
         else timeGreeting = "ดึกแล้วยังไม่นอนอีกนะเจ้ามนุษย์ 🌙";
         statusText.innerText = timeGreeting;
 
-        // เปลี่ยนธีม
         const themeToggleBtn = document.getElementById('themeToggleBtn');
         const bodyTag = document.body;
         themeToggleBtn.addEventListener('click', function(e) {
@@ -412,7 +466,6 @@
             }
         });
 
-        // น้องต่ายพูดคุย & กิมมิคที่ 3: ต่ายขโมยเคอร์เซอร์ (หรือวิ่งหนีเมื่อเข้าใกล้)
         const petBox = document.getElementById('petBox');
         const petSpeech = document.getElementById('petSpeech');
         const petAvatar = document.getElementById('petAvatar');
@@ -420,7 +473,7 @@
             "สวัสดีเจ้ามนุษย์! 🐾",
             "Faber est quisque fortunae suae ✨",
             "อย่าลืมกดฟองสบู่ข้างบนน้า 🫧",
-            "ระวังเมาส์หายนะ ฮ่าๆๆ 😼",
+            "ระวังตอบ Captcha ผิดนะ ฮ่าๆๆ 😼",
             "แอบขี้เกียจอยู่รึเปล่าเนี่ย 🤭"
         ];
 
@@ -433,7 +486,7 @@
             }, 200);
         });
 
-        // กิมมิคต่ายแกล้งวิ่งหนีเคอร์เซอร์เมาส์เบาๆ ถ้าเอาเมาส์เข้าใกล้
+        // ต่ายวิ่งหนีเบาๆ เมื่อเมาส์เข้าใกล้
         document.addEventListener('mousemove', function(e) {
             const rect = petBox.getBoundingClientRect();
             const dx = e.clientX - (rect.left + rect.width / 2);
@@ -447,11 +500,13 @@
             }
         });
 
-        // เกมหลัก: ฟองสบู่ -> เก็บหิมะ
         const interactiveBtn = document.getElementById('interactiveBtn');
         const powerFill = document.getElementById('powerFill');
         const welcomeCard = document.getElementById('welcomeCard');
         const meterBox = document.getElementById('meterBox');
+        const captchaBox = document.getElementById('captchaBox');
+        const captchaInput = document.getElementById('captchaInput');
+        const captchaSubmit = document.getElementById('captchaSubmit');
         const bioChoiceBox = document.getElementById('bioChoiceBox');
         const btnNot = document.getElementById('btnNot');
         const btnWant = document.getElementById('btnWant');
@@ -474,7 +529,6 @@
             powerFill.style.width = fillProgress + '%';
             statusText.innerText = `สะสมพลัง (${currentClick}/10)`;
 
-            // กิมมิคที่ 1: โยนอีโมจิป่วนจอทุกๆ การคลิกฟองสบู่
             spawnFloatingEmoji(e.clientX || window.innerWidth/2, e.clientY || window.innerHeight/2);
 
             if (currentClick >= maxPower) {
@@ -520,46 +574,4 @@
 
                     if (snowCollected === 1) {
                         statusText.innerText = 'เก่งมาก เหลืออีก 2 ดวง 🤭';
-                        petSpeech.innerText = 'เก่งมาก เก็บอีก 2 ดวง!';
-                    } else if (snowCollected === 2) {
-                        statusText.innerText = 'เกือบครบละ แอบเนียนนะเราอะ ✨';
-                        petSpeech.innerText = 'อีกดวงเดียว สู้ๆ!';
-                    } else if (snowCollected === 3) {
-                        phase = 3;
-                        statusText.style.display = 'none';
-                        subInstruction.style.display = 'none';
-                        meterBox.style.display = 'none';
-                        interactiveBtn.style.display = 'none';
-                        
-                        bioChoiceBox.style.display = 'flex';
-                        petSpeech.innerText = 'เลือกดีๆ นะ จะยอมให้ดูมั้ยน้า 🤭';
-                        explodeStars();
-                    }
-                });
-                document.body.appendChild(snow);
-            });
-        }
-
-        let runAwayCount = 0;
-        const maxRunAway = 5;
-
-        btnNot.addEventListener('pointerdown', function(e) {
-            e.preventDefault();
-            btnNot.style.opacity = '0';
-            btnNot.style.transform = 'scale(0.5)';
-            petSpeech.innerText = 'อ้าว หายไปซะแล้ว ฮ่าๆๆ 🤭';
-            setTimeout(() => {
-                btnNot.style.display = 'none';
-            }, 500);
-        });
-
-        // กิมมิคที่ 2: ปุ่มหนีเมาส์แบบวาร์ปป่วนๆ เลเวลอัพ
-        btnWant.addEventListener('pointerdown', function(e) {
-            e.preventDefault();
-            if (runAwayCount < maxRunAway) {
-                runAwayCount++;
-                playPopSound();
-                spawnFloatingEmoji(e.clientX, e.clientY);
-
-                // สุ่มกระโดดวาร์ปแบบไกลขึ้นและคาดเดายากขึ้น
-                const randomX = (Math.random() - 0.5) * 220
+  
