@@ -59,16 +59,10 @@
         }
 
         @keyframes fallDown {
-            0% {
-                transform: translateY(-20px) rotate(0deg);
-                opacity: 0;
-            }
+            0% { transform: translateY(-20px) rotate(0deg); opacity: 0; }
             10% { opacity: 0.8; }
             90% { opacity: 0.8; }
-            100% {
-                transform: translateY(105vh) rotate(360deg);
-                opacity: 0;
-            }
+            100% { transform: translateY(105vh) rotate(360deg); opacity: 0; }
         }
 
         .welcome-card {
@@ -86,7 +80,6 @@
             background-origin: border-box;
             background-clip: padding-box, border-box;
             width: 340px;
-            transition: transform 0.2s ease;
         }
 
         .card-tag {
@@ -103,7 +96,6 @@
             box-shadow: 0 3px 10px rgba(0, 119, 182, 0.3);
         }
 
-        /* ปุ่มสลับธีม (มุมซ้ายบน) */
         .theme-toggle {
             position: absolute;
             top: -12px;
@@ -122,7 +114,6 @@
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
 
-        /* ปุ่มเปิด-ปิดเพลง (มุมขวาล่างของการ์ด หรือตำแหน่งเก๋ๆ) */
         .music-toggle {
             position: absolute;
             bottom: -15px;
@@ -234,14 +225,8 @@
         }
 
         @keyframes burstOut {
-            0% {
-                transform: translate(0, 0) scale(1) rotate(0deg);
-                opacity: 1;
-            }
-            100% {
-                transform: translate(var(--tx), var(--ty)) scale(0.1) rotate(720deg);
-                opacity: 0;
-            }
+            0% { transform: translate(0, 0) scale(1) rotate(0deg); opacity: 1; }
+            100% { transform: translate(var(--tx), var(--ty)) scale(0.1) rotate(720deg); opacity: 0; }
         }
 
         .blizzard-storm {
@@ -253,24 +238,13 @@
         }
 
         @keyframes stormSpin {
-            0% {
-                transform: translate(0, 0) scale(0.5) rotate(0deg);
-                opacity: 1;
-            }
-            100% {
-                transform: translate(var(--bx), var(--by)) scale(1.5) rotate(1080deg);
-                opacity: 0;
-            }
+            0% { transform: translate(0, 0) scale(0.5) rotate(0deg); opacity: 1; }
+            100% { transform: translate(var(--bx), var(--by)) scale(1.5) rotate(1080deg); opacity: 0; }
         }
 
         body.fade-out {
             opacity: 0;
             transition: opacity 0.6s ease;
-        }
-
-        /* ซ่อน YouTube Player ไม่ให้เกะกะหน้าจอ */
-        #youtube-player-container {
-            display: none;
         }
     </style>
 </head>
@@ -280,64 +254,42 @@
         <button class="theme-toggle" id="themeToggleBtn" title="เปลี่ยนธีม">🌙</button>
         <div class="card-tag">WELCOME</div>
         
-        <span class="main-icon" id="interactiveBtn" title="ระวังมันหนีนะ!">🫧</span>
+        <span class="main-icon" id="interactiveBtn">🫧</span>
         <div class="text" id="statusText">กำลังโหลดเวลา...</div>
         <div class="power-meter-container">
             <div class="power-meter-fill" id="powerFill"></div>
         </div>
         <div class="click-instruction" id="subInstruction">คลิกที่ฟองสบู่รัวๆ!</div>
 
-        <!-- ปุ่มเปิด/ปิดเพลง ปล่อยดาว (YEW) -->
+        <!-- ปุ่มเปิด/ปิดเพลง ปล่อยดาว (ใช้วิธีฝัง iframe ซ่อนแบบเสถียร) -->
         <button class="music-toggle" id="musicToggleBtn">
             <span>🎧</span> <span id="musicStatusText">เปิดเพลง ปล่อยดาว</span>
         </button>
     </div>
 
-    <!-- YouTube IFrame API สำหรับเล่นเพลงพื้นหลัง -->
-    <div id="youtube-player-container">
-        <div id="player"></div>
+    <!-- ซ่อนไอเฟรมเพลง YouTube แบบปลอดภัย -->
+    <div id="audioPlayerContainer" style="display:none;">
+        <iframe id="youtubeAudio" width="1" height="1" src="" title="YouTube audio player" frameborder="0" allow="autoplay"></iframe>
     </div>
 
     <div class="footer-text">est. 2026  ·  made with ♡</div>
 
     <script>
-        // โหลด YouTube IFrame API
-        var tag = document.createElement('script');
-        tag.src = "https://www.youtube.com/iframe_api";
-        var firstScriptTag = document.getElementsByTagName('script')[0];
-        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
-        var player;
-        function onYouTubeIframeAPIReady() {
-            player = new YT.Player('player', {
-                height: '0',
-                width: '0',
-                videoId: '2fP6OLhBCSQ', // รหัสวิดีโอเพลง ปล่อยดาว | Flaw - YEW
-                playerVars: {
-                    'autoplay': 0,
-                    'loop': 1,
-                    'playlist': '2fP6OLhBCSQ'
-                }
-            });
-        }
-
-        // ควบคุมปุ่มเปิด-ปิดเพลง
+        // ควบคุมเพลงพื้นหลังแบบปลอดภัย
         const musicToggleBtn = document.getElementById('musicToggleBtn');
         const musicStatusText = document.getElementById('musicStatusText');
+        const youtubeAudio = document.getElementById('youtubeAudio');
         let isMusicPlaying = false;
 
-        musicToggleBtn.addEventListener('click', function() {
-            if (!player || typeof player.playVideo !== 'function') {
-                alert('กำลังโหลดเพลง รอสักครู่นะครับ...');
-                return;
-            }
-
+        musicToggleBtn.addEventListener('click', function(e) {
+            e.stopPropagation(); // ป้องกันไม่ให้คลิกทะลุไปโดนการ์ด
             if (!isMusicPlaying) {
-                player.playVideo();
+                // ใส่ autoplay=1 เพื่อให้เพลงเล่นทันทีเมื่อกด
+                youtubeAudio.src = "https://www.youtube.com/embed/2fP6OLhBCSQ?autoplay=1&loop=1&playlist=2fP6OLhBCSQ";
                 musicStatusText.innerText = 'ปิดเพลง 🎵';
                 isMusicPlaying = true;
             } else {
-                player.pauseVideo();
+                youtubeAudio.src = ""; // ปิดเพลงโดยการเคลียร์ src
                 musicStatusText.innerText = 'เปิดเพลง ปล่อยดาว';
                 isMusicPlaying = false;
             }
@@ -421,7 +373,8 @@
         const themeToggleBtn = document.getElementById('themeToggleBtn');
         const bodyTag = document.body;
 
-        themeToggleBtn.addEventListener('click', function() {
+        themeToggleBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
             if (bodyTag.classList.contains('light-theme')) {
                 bodyTag.classList.remove('light-theme');
                 bodyTag.classList.add('dark-theme');
@@ -463,18 +416,6 @@
                 subInstruction.innerText = 'จิ้มเก็บหิมะรอบๆ หน้าจอให้ครบสิ!';
                 spawnSnowflakes();
             }
-        });
-
-        // ปุ่มวิ่งหนีแกล้งคนใจร้อน
-        interactiveBtn.addEventListener('mousemove', function() {
-            if (phase !== 1) return;
-            const randomX = (Math.random() - 0.5) * 12;
-            const randomY = (Math.random() - 0.5) * 12;
-            interactiveBtn.style.transform = `translate(${randomX}px, ${randomY}px)`;
-        });
-
-        interactiveBtn.addEventListener('mouseleave', function() {
-            interactiveBtn.style.transform = 'translate(0px, 0px)';
         });
 
         // ดับเบิลคลิกเพื่อเปิดโหมดพายุหิมะลับ
@@ -577,4 +518,11 @@
                 document.body.appendChild(star);
 
                 setTimeout(() => {
-        
+                    star.remove();
+                }, 1000);
+            }
+        }
+    </script>
+
+</body>
+</html>
