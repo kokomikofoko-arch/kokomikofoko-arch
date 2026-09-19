@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome 🤍</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #faf8f5;
+            font-family: sans-serif;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* กรอบการ์ดสุดคิ้วท์ พร้อมเงาดุ๊กดิ๊กและขอบวิบวับฟ้า-ชมพู */
+        .welcome-card {
+            position: relative;
+            background: #ffffff;
+            padding: 45px 55px;
+            border-radius: 28px;
+            text-align: center;
+            cursor: pointer;
+            user-select: none;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 10;
+            border: 2px solid transparent;
+            background-image: linear-gradient(#ffffff, #ffffff), 
+                              linear-gradient(135deg, #a2d2ff, #ffafcc, #bde0fe);
+            background-origin: border-box;
+            background-clip: padding-box, border-box;
+        }
+
+        .welcome-card:hover {
+            transform: translateY(-8px) scale(1.03);
+            box-shadow: 0 15px 40px rgba(255, 175, 204, 0.3), 
+                        0 0 20px rgba(162, 210, 255, 0.4);
+        }
+
+        /* ป้ายแท็กจิ๋วห้อยมุมการ์ด */
+        .card-tag {
+            position: absolute;
+            top: -12px;
+            right: 20px;
+            background: #ffafcc;
+            color: #fff;
+            font-size: 10px;
+            padding: 3px 10px;
+            border-radius: 20px;
+            letter-spacing: 1px;
+            font-weight: bold;
+            box-shadow: 0 3px 10px rgba(255, 175, 204, 0.5);
+        }
+
+        .bow {
+            font-size: 75px;
+            display: block;
+            margin-bottom: 12px;
+            filter: drop-shadow(0 5px 10px rgba(0,0,0,0.05));
+        }
+
+        .text {
+            font-size: 14px;
+            letter-spacing: 2px;
+            color: #777;
+        }
+
+        /* ข้อความ footer เล็กๆ ด้านล่าง */
+        .footer-text {
+            position: absolute;
+            bottom: 25px;
+            font-size: 11px;
+            letter-spacing: 1.5px;
+            color: #aaa;
+            user-select: none;
+            z-index: 10;
+        }
+
+        /* สไตล์สำหรับดาวกระจายที่ร่วงลงมา */
+        .falling-star {
+            position: absolute;
+            top: -50px;
+            font-size: 24px;
+            animation: fallDown 1s linear forwards;
+            z-index: 5;
+            user-select: none;
+        }
+
+        @keyframes fallDown {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(105vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* เอฟเฟกต์เฟดหน้าจอตอนท้าย */
+        body.fade-out {
+            opacity: 0;
+            transition: opacity 0.6s ease;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="welcome-card" onclick="goToBio()">
+        <div class="card-tag">WELCOME</div>
+        <span class="bow">🎀</span>
+        <div class="text">กดเพื่อไปต่อ</div>
+    </div>
+
+    <!-- ข้อความเล็กๆ ด้านล่าง -->
+    <div class="footer-text">est. 2026  ·  made with ♡</div>
+
+    <script>
+        function goToBio() {
+            // สร้างดาวกระจายร่วงลงมาหลายๆ ดวงพร้อมกัน
+            for (let i = 0; i < 20; i++) {
+                let star = document.createElement('div');
+                star.className = 'falling-star';
+                star.innerHTML = '✨';
+                
+                // สุ่มตำแหน่งซ้ายขวาและเวลาความเร็วในการร่วง
+                star.style.left = Math.random() * window.innerWidth + 'px';
+                star.style.animationDuration = (0.5 + Math.random() * 0.8) + 's';
+                star.style.fontSize = (15 + Math.random() * 20) + 'px';
+                
+                document.body.appendChild(star);
+            }
+
+            // รอแป๊บเดียวให้ดาวร่วงแล้วค่อยเฟดเปลี่ยนหน้าไป bio.html
+            setTimeout(function() {
+                document.body.classList.add('fade-out');
+            }, 500);
+
+            setTimeout(function() {
+                window.location.href = 'bio.html'; 
+            }, 1100);
+        }
+    </script>
+
+</body>
+</html>
+
