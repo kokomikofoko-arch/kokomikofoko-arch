@@ -33,6 +33,7 @@
             --tag-bg: #0077b6;
             --border-gradient: linear-gradient(135deg, #0077b6, #48cae4, #90e0ef);
             --card-shadow: 0 10px 30px rgba(0, 119, 182, 0.08);
+            --player-bg: rgba(255, 255, 255, 0.9);
         }
 
         body.dark-theme {
@@ -44,6 +45,7 @@
             --tag-bg: #48cae4;
             --border-gradient: linear-gradient(135deg, #48cae4, #0077b6, #1d3557);
             --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            --player-bg: rgba(17, 29, 45, 0.9);
         }
 
         .ambient-snow {
@@ -112,30 +114,36 @@
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
 
-        .music-toggle {
-            position: absolute;
-            bottom: -15px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: var(--card-bg);
-            border: 2px solid var(--tag-bg);
-            color: var(--text-color);
-            font-size: 11px;
-            padding: 4px 14px;
-            border-radius: 20px;
+        /* กล่องมินิเพลเยอร์มุมขวาล่าง */
+        .mini-player-box {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--player-bg);
+            backdrop-filter: blur(8px);
+            border: 1px solid var(--sub-text);
+            padding: 8px 12px;
+            border-radius: 15px;
             display: flex;
             align-items: center;
-            gap: 5px;
-            cursor: pointer;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-            font-weight: bold;
-            z-index: 15;
-            text-decoration: none;
+            gap: 10px;
+            z-index: 999;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
 
-        .music-toggle:hover {
-            background: var(--tag-bg);
-            color: #fff;
+        .mini-player-box span {
+            font-size: 11px;
+            color: var(--text-color);
+            font-weight: bold;
+        }
+
+        /* ซ่อนกรอบ iframe ให้เหลือขนาดจิ๋วหรือวางแบบเนียนๆ ให้กด Play ได้ */
+        .yt-frame-wrapper {
+            width: 80px;
+            height: 45px;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid var(--tag-bg);
         }
 
         .main-icon {
@@ -259,11 +267,14 @@
             <div class="power-meter-fill" id="powerFill"></div>
         </div>
         <div class="click-instruction" id="subInstruction">คลิกที่ฟองสบู่รัวๆ!</div>
+    </div>
 
-        <!-- ปรับเป็นลิงก์เปิดฟังเพลงบน YouTube โดยตรงแบบชัวร์ๆ -->
-        <a href="https://youtu.be/2fP6OLhBCSQ?si=fLohnPlovAKDEt0l" target="_blank" class="music-toggle" id="musicToggleBtn">
-            <span>🎧</span> <span>ฟังเพลง ปล่อยดาว (YouTube)</span>
-        </a>
+    <!-- มินิเพลเยอร์เพลง ปล่อยดาว ลอยอยู่มุมขวาล่างแบบเก๋ๆ -->
+    <div class="mini-player-box">
+        <span>🎧 ปล่อยดาว</span>
+        <div class="yt-frame-wrapper">
+            <iframe width="100%" height="100%" src="https://www.youtube.com/embed/2fP6OLhBCSQ?enablejsapi=1" title="YEW - ปล่อยดาว" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
     </div>
 
     <div class="footer-text">est. 2026  ·  made with ♡</div>
