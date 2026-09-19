@@ -23,28 +23,68 @@
             position: relative;
         }
 
+        /* กรอบการ์ดสุดคิ้วท์ พร้อมเงาดุ๊กดิ๊กและขอบวิบวับฟ้า-ชมพู */
         .welcome-card {
+            position: relative;
+            background: #ffffff;
+            padding: 45px 55px;
+            border-radius: 28px;
             text-align: center;
             cursor: pointer;
             user-select: none;
-            transition: transform 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             z-index: 10;
+            border: 2px solid transparent;
+            background-image: linear-gradient(#ffffff, #ffffff), 
+                              linear-gradient(135deg, #a2d2ff, #ffafcc, #bde0fe);
+            background-origin: border-box;
+            background-clip: padding-box, border-box;
         }
 
         .welcome-card:hover {
-            transform: scale(1.08);
+            transform: translateY(-8px) scale(1.03);
+            box-shadow: 0 15px 40px rgba(255, 175, 204, 0.3), 
+                        0 0 20px rgba(162, 210, 255, 0.4);
+        }
+
+        /* ป้ายแท็กจิ๋วห้อยมุมการ์ด */
+        .card-tag {
+            position: absolute;
+            top: -12px;
+            right: 20px;
+            background: #ffafcc;
+            color: #fff;
+            font-size: 10px;
+            padding: 3px 10px;
+            border-radius: 20px;
+            letter-spacing: 1px;
+            font-weight: bold;
+            box-shadow: 0 3px 10px rgba(255, 175, 204, 0.5);
         }
 
         .bow {
             font-size: 75px;
             display: block;
             margin-bottom: 12px;
+            filter: drop-shadow(0 5px 10px rgba(0,0,0,0.05));
         }
 
         .text {
             font-size: 14px;
             letter-spacing: 2px;
             color: #777;
+        }
+
+        /* ข้อความ footer เล็กๆ ด้านล่าง */
+        .footer-text {
+            position: absolute;
+            bottom: 25px;
+            font-size: 11px;
+            letter-spacing: 1.5px;
+            color: #aaa;
+            user-select: none;
+            z-index: 10;
         }
 
         /* สไตล์สำหรับดาวกระจายที่ร่วงลงมา */
@@ -78,9 +118,13 @@
 <body>
 
     <div class="welcome-card" onclick="goToBio()">
+        <div class="card-tag">WELCOME</div>
         <span class="bow">🎀</span>
         <div class="text">กดเพื่อไปต่อ</div>
     </div>
+
+    <!-- ข้อความเล็กๆ ด้านล่าง -->
+    <div class="footer-text">est. 2026  ·  made with ♡</div>
 
     <script>
         function goToBio() {
@@ -88,7 +132,7 @@
             for (let i = 0; i < 20; i++) {
                 let star = document.createElement('div');
                 star.className = 'falling-star';
-                star.innerHTML = '✨'; // เปลี่ยนเป็นไอคอนอื่นได้ เช่น 🌟 หรือ 💫
+                star.innerHTML = '✨';
                 
                 // สุ่มตำแหน่งซ้ายขวาและเวลาความเร็วในการร่วง
                 star.style.left = Math.random() * window.innerWidth + 'px';
