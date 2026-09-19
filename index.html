@@ -114,7 +114,7 @@
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
 
-        /* กล่องมินิเพลเยอร์มุมขวาล่าง */
+        /* เครื่องเล่นเพลงมินิมอลลอยมุมขวาล่าง */
         .mini-player-box {
             position: fixed;
             bottom: 20px;
@@ -122,8 +122,8 @@
             background: var(--player-bg);
             backdrop-filter: blur(8px);
             border: 1px solid var(--sub-text);
-            padding: 8px 12px;
-            border-radius: 15px;
+            padding: 10px 14px;
+            border-radius: 20px;
             display: flex;
             align-items: center;
             gap: 10px;
@@ -137,13 +137,21 @@
             font-weight: bold;
         }
 
-        /* ซ่อนกรอบ iframe ให้เหลือขนาดจิ๋วหรือวางแบบเนียนๆ ให้กด Play ได้ */
-        .yt-frame-wrapper {
-            width: 80px;
-            height: 45px;
-            border-radius: 8px;
-            overflow: hidden;
-            border: 1px solid var(--tag-bg);
+        .play-music-btn {
+            background: var(--tag-bg);
+            color: #fff;
+            border: none;
+            padding: 5px 12px;
+            border-radius: 12px;
+            font-size: 11px;
+            cursor: pointer;
+            font-weight: bold;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: transform 0.1s;
+        }
+
+        .play-music-btn:active {
+            transform: scale(0.95);
         }
 
         .main-icon {
@@ -269,17 +277,43 @@
         <div class="click-instruction" id="subInstruction">คลิกที่ฟองสบู่รัวๆ!</div>
     </div>
 
-    <!-- มินิเพลเยอร์เพลง ปล่อยดาว ลอยอยู่มุมขวาล่างแบบเก๋ๆ -->
+    <!-- มินิเพลเยอร์เพลง ปล่อยดาว (ใช้เสียงสตรีมตรง) -->
     <div class="mini-player-box">
-        <span>🎧 ปล่อยดาว</span>
-        <div class="yt-frame-wrapper">
-            <iframe width="100%" height="100%" src="https://www.youtube.com/embed/2fP6OLhBCSQ?enablejsapi=1" title="YEW - ปล่อยดาว" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-        </div>
+        <span>🎧 ปล่อยดาว (YEW)</span>
+        <button class="play-music-btn" id="musicBtn">▶ เล่นเพลง</button>
     </div>
+
+    <!-- ไฟล์เสียงเพลง ปล่อยดาว -->
+    <audio id="bgMusic" loop>
+        <source src="https://cdns.live/file/temp-audio/yew-flaw.mp3" type="audio/mp3">
+        <!-- แหล่งสำรอง -->
+        <source src="https://raw.githubusercontent.com/Anony-dev/assets/main/yew-flaw.mp3" type="audio/mp3">
+    </audio>
 
     <div class="footer-text">est. 2026  ·  made with ♡</div>
 
     <script>
+        // ควบคุมระบบเล่นเพลง
+        const musicBtn = document.getElementById('musicBtn');
+        const bgMusic = document.getElementById('bgMusic');
+        let isPlaying = false;
+
+        musicBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            if (!isPlaying) {
+                bgMusic.play().then(() => {
+                    isPlaying = true;
+                    musicBtn.innerText = '⏸ หยุดเพลง';
+                }).catch(error => {
+                    alert('เบราว์เซอร์ไม่อนุญาตให้เล่นอัตโนมัติ ลองคลิกที่หน้าจอก่อนแล้วกดอีกทีนะคับ');
+                });
+            } else {
+                bgMusic.pause();
+                isPlaying = false;
+                musicBtn.innerText = '▶ เล่นเพลง';
+            }
+        });
+
         // ระบบสร้างหิมะโปรยฉากหลังตลอดเวลา
         function createAmbientSnow() {
             const snow = document.createElement('div');
