@@ -72,7 +72,7 @@
         .welcome-card {
             position: relative;
             background: var(--card-bg);
-            padding: 50px 65px;
+            padding: 50px 30px;
             border-radius: 30px;
             text-align: center;
             user-select: none;
@@ -83,7 +83,7 @@
                               var(--border-gradient);
             background-origin: border-box;
             background-clip: padding-box, border-box;
-            width: 340px;
+            width: 320px;
         }
 
         .card-tag {
@@ -118,18 +118,28 @@
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
 
+        /* ปรับแก้ตรงนี้ให้เป็นปุ่มกดที่รองรับการแตบนิ้วบนมือถือได้ง่ายขึ้น */
+        .main-icon-container {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+            border-radius: 20px;
+            cursor: pointer;
+            margin-bottom: 15px;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+        }
+
         .main-icon {
-            font-size: 80px;
+            font-size: 70px;
             display: inline-block;
-            margin-bottom: 25px;
             filter: drop-shadow(0 5px 10px rgba(0,119,182,0.15));
             transition: transform 0.1s ease;
-            cursor: pointer;
-            position: relative;
-            -webkit-tap-highlight-color: transparent;
+            pointer-events: none;
         }
         
-        .main-icon.active {
+        .main-icon-container.active .main-icon {
             transform: scale(1.15);
         }
 
@@ -176,7 +186,6 @@
             z-index: 10;
         }
 
-        /* ด่าน Captcha ลับ */
         .captcha-box {
             display: none;
             flex-direction: column;
@@ -309,10 +318,8 @@
             filter: drop-shadow(0 4px 8px rgba(0,119,182,0.2));
             transition: transform 0.2s, opacity 0.2s;
             -webkit-tap-highlight-color: transparent;
-        }
-
-        .scattered-snow:hover {
-            transform: scale(1.3);
+            touch-action: manipulation;
+            padding: 10px;
         }
 
         @keyframes floatSlow {
@@ -351,7 +358,6 @@
             transition: opacity 0.6s ease;
         }
 
-        /* เอฟเฟกต์กล่องสั่นเวลาตอบผิด */
         @keyframes shakeBox {
             0%, 100% { transform: translateX(0); }
             20%, 60% { transform: translateX(-6px); }
@@ -368,7 +374,11 @@
         <button class="theme-toggle" id="themeToggleBtn" title="เปลี่ยนธีม">🌙</button>
         <div class="card-tag">WELCOME</div>
         
-        <span class="main-icon" id="interactiveBtn">🫧</span>
+        <!-- หุ้มกล่องไอคอนด้วย container เพื่อให้กดติดง่ายขึ้นบนมือถือ -->
+        <div class="main-icon-container" id="interactiveBtn">
+            <span class="main-icon">🫧</span>
+        </div>
+
         <div class="text" id="statusText">กำลังโหลดเวลา...</div>
         <div class="power-meter-container" id="meterBox">
             <div class="power-meter-fill" id="powerFill"></div>
@@ -486,7 +496,6 @@
             }, 200);
         });
 
-        // ต่ายวิ่งหนีเบาๆ เมื่อเมาส์เข้าใกล้
         document.addEventListener('mousemove', function(e) {
             const rect = petBox.getBoundingClientRect();
             const dx = e.clientX - (rect.left + rect.width / 2);
@@ -516,8 +525,8 @@
         let phase = 1; 
         let snowCollected = 0;
 
-        interactiveBtn.addEventListener('pointerdown', function(e) {
-            e.preventDefault();
+        // รองรับทั้ง pointerdown และ click บนมือถือ
+        interactiveBtn.addEventListener('click', function(e) {
             if (phase !== 1) return; 
 
             playPopSound();
@@ -533,7 +542,7 @@
 
             if (currentClick >= maxPower) {
                 phase = 2;
-                interactiveBtn.innerText = '❄️';
+                interactiveBtn.style.display = 'none';
                 statusText.innerText = 'เอ๊ะ! มีเกล็ดหิมะหล่นมา 3 ดวง 🧊';
                 subInstruction.innerText = 'จิ้มเก็บหิมะรอบๆ หน้าจอให้ครบสิ!';
                 petSpeech.innerText = 'หิมะตกแล้ว! ตามเก็บเร้ว ❄️';
@@ -554,9 +563,9 @@
 
         function spawnSnowflakes() {
             const coords = [
-                { x: '18vw', y: '25vh' },
-                { x: '75vw', y: '70vh' },
-                { x: '78vw', y: '22vh' }
+                { x: '15vw', y: '25vh' },
+                { x: '75vw', y: '68vh' },
+                { x: '78vw', y: '20vh' }
             ];
 
             coords.forEach((pos) => {
@@ -564,14 +573,4 @@
                 snow.className = 'scattered-snow';
                 snow.innerHTML = '❄️';
                 snow.style.left = pos.x;
-                snow.style.top = pos.y;
-
-                snow.addEventListener('pointerdown', function(e) {
-                    e.preventDefault();
-                    snow.remove();
-                    snowCollected++;
-                    spawnFloatingEmoji(e.clientX, e.clientY);
-
-                    if (snowCollected === 1) {
-                        statusText.innerText = 'เก่งมาก เหลืออีก 2 ดวง 🤭';
-  
+                snow.style.top 
