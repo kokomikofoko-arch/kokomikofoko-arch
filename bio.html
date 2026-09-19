@@ -14,14 +14,15 @@
 
         body {
             width: 100vw;
-            height: 100vh;
+            min-height: 100vh;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             background: var(--bg-color, #f4f8fb);
             font-family: sans-serif;
-            overflow: hidden;
             position: relative;
+            padding: 40px 20px;
         }
 
         body.light-theme {
@@ -33,7 +34,7 @@
             --tag-bg: #0077b6;
             --border-gradient: linear-gradient(135deg, #0077b6, #48cae4, #90e0ef);
             --card-shadow: 0 10px 30px rgba(0, 119, 182, 0.08);
-            --player-bg: rgba(255, 255, 255, 0.9);
+            --board-bg: #ffffff;
         }
 
         body.dark-theme {
@@ -45,11 +46,11 @@
             --tag-bg: #48cae4;
             --border-gradient: linear-gradient(135deg, #48cae4, #0077b6, #1d3557);
             --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
-            --player-bg: rgba(17, 29, 45, 0.9);
+            --board-bg: #111d2d;
         }
 
         .ambient-snow {
-            position: absolute;
+            position: fixed;
             top: -20px;
             color: rgba(72, 202, 228, 0.6);
             user-select: none;
@@ -80,6 +81,7 @@
             background-origin: border-box;
             background-clip: padding-box, border-box;
             width: 340px;
+            margin-bottom: 30px;
         }
 
         .card-tag {
@@ -114,44 +116,27 @@
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
 
-        /* เครื่องเล่นเพลงมินิมอลลอยมุมขวาล่าง */
-        .mini-player-box {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: var(--player-bg);
-            backdrop-filter: blur(8px);
-            border: 1px solid var(--sub-text);
-            padding: 10px 14px;
+        /* บอร์ดคอมเมนต์สาธารณะด้านล่าง */
+        .public-board {
+            width: 100%;
+            max-width: 450px;
+            background: var(--board-bg);
+            padding: 20px 25px;
             border-radius: 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            z-index: 999;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            box-shadow: var(--card-shadow);
+            z-index: 10;
+            border: 1px solid var(--sub-text);
         }
 
-        .mini-player-box span {
-            font-size: 11px;
+        .board-title {
+            font-size: 13px;
             color: var(--text-color);
             font-weight: bold;
-        }
-
-        .play-music-btn {
-            background: var(--tag-bg);
-            color: #fff;
-            border: none;
-            padding: 5px 12px;
-            border-radius: 12px;
-            font-size: 11px;
-            cursor: pointer;
-            font-weight: bold;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            transition: transform 0.1s;
-        }
-
-        .play-music-btn:active {
-            transform: scale(0.95);
+            margin-bottom: 12px;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
 
         .main-icon {
@@ -203,8 +188,7 @@
         }
 
         .footer-text {
-            position: absolute;
-            bottom: 25px;
+            margin-top: 25px;
             font-size: 11px;
             letter-spacing: 1.5px;
             color: var(--sub-text);
@@ -277,43 +261,23 @@
         <div class="click-instruction" id="subInstruction">คลิกที่ฟองสบู่รัวๆ!</div>
     </div>
 
-    <!-- มินิเพลเยอร์เพลง ปล่อยดาว (ใช้เสียงสตรีมตรง) -->
-    <div class="mini-player-box">
-        <span>🎧 ปล่อยดาว (YEW)</span>
-        <button class="play-music-btn" id="musicBtn">▶ เล่นเพลง</button>
+    <!-- บอร์ดคอมเมนต์สาธารณะ (Guestbook) ที่ทุกคนแชร์กันอ่านได้ -->
+    <div class="public-board">
+        <div class="board-title">💬 บอร์ดพูดคุยสาธารณะ (Guestbook)</div>
+        <!-- ใช้ระบบฝังคอมเมนต์เบาๆ แบบไม่เกะกะ -->
+        <div id="cusdis_thread"
+          data-host="https://cusdis.com"
+          data-app-id="YOUR_CUSDIS_APP_ID"
+          data-page-id="welcome-page-main"
+          data-page-url=""
+          data-page-title="Welcome Page"
+        ></div>
+        <script async src="https://cusdis.com/js/cusdis.es.js"></script>
     </div>
-
-    <!-- ไฟล์เสียงเพลง ปล่อยดาว -->
-    <audio id="bgMusic" loop>
-        <source src="https://cdns.live/file/temp-audio/yew-flaw.mp3" type="audio/mp3">
-        <!-- แหล่งสำรอง -->
-        <source src="https://raw.githubusercontent.com/Anony-dev/assets/main/yew-flaw.mp3" type="audio/mp3">
-    </audio>
 
     <div class="footer-text">est. 2026  ·  made with ♡</div>
 
     <script>
-        // ควบคุมระบบเล่นเพลง
-        const musicBtn = document.getElementById('musicBtn');
-        const bgMusic = document.getElementById('bgMusic');
-        let isPlaying = false;
-
-        musicBtn.addEventListener('click', function(e) {
-            e.stopPropagation();
-            if (!isPlaying) {
-                bgMusic.play().then(() => {
-                    isPlaying = true;
-                    musicBtn.innerText = '⏸ หยุดเพลง';
-                }).catch(error => {
-                    alert('เบราว์เซอร์ไม่อนุญาตให้เล่นอัตโนมัติ ลองคลิกที่หน้าจอก่อนแล้วกดอีกทีนะคับ');
-                });
-            } else {
-                bgMusic.pause();
-                isPlaying = false;
-                musicBtn.innerText = '▶ เล่นเพลง';
-            }
-        });
-
         // ระบบสร้างหิมะโปรยฉากหลังตลอดเวลา
         function createAmbientSnow() {
             const snow = document.createElement('div');
@@ -519,7 +483,7 @@
 
             for (let i = 0; i < 25; i++) {
                 let star = document.createElement('div');
-                star.className = 'exploding-star';
+                star.className, 'exploding-star';
                 star.innerHTML = '✨';
 
                 const angle = Math.random() * Math.PI * 2;
