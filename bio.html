@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome 🫧❄️</title>
+    <title>Welcome 🫧❄️✨</title>
     <style>
         * {
             box-sizing: border-box;
@@ -24,7 +24,6 @@
             position: relative;
         }
 
-        /* ธีมสว่างและมืด */
         body.light-theme {
             --bg-color: #f4f8fb;
             --card-bg: #ffffff;
@@ -78,7 +77,6 @@
             box-shadow: 0 3px 10px rgba(0, 119, 182, 0.3);
         }
 
-        /* ปุ่มสลับธีมมุมซ้ายบนของการ์ด */
         .theme-toggle {
             position: absolute;
             top: -12px;
@@ -104,6 +102,7 @@
             filter: drop-shadow(0 5px 10px rgba(0,119,182,0.15));
             transition: transform 0.1s ease;
             cursor: pointer;
+            touch-action: manipulation;
         }
         
         .main-icon.active {
@@ -173,6 +172,20 @@
             100% { transform: translateY(-8px) rotate(15deg); }
         }
 
+        /* เอฟเฟกต์ดาวลอยตามรอยนิ้วมือ */
+        .trail-star {
+            position: absolute;
+            font-size: 14px;
+            pointer-events: none;
+            animation: fadeTrail 0.6s linear forwards;
+            z-index: 100;
+        }
+
+        @keyframes fadeTrail {
+            0% { transform: scale(1) translateY(0); opacity: 1; }
+            100% { transform: scale(0.3) translateY(-20px); opacity: 0; }
+        }
+
         .exploding-star {
             position: absolute;
             font-size: 20px;
@@ -214,7 +227,7 @@
     <div class="footer-text">est. 2026  ·  made with ♡</div>
 
     <script>
-        // ระบบเสียงเอฟเฟกต์สังเคราะห์ (Web Audio API) ไม่มีไฟล์เสียงก็มีเสียงได้!
+        // ระบบเสียงเอฟเฟกต์ Web Audio API
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         
         function playPopSound() {
@@ -223,14 +236,11 @@
             let gain = audioCtx.createGain();
             osc.connect(gain);
             gain.connect(audioCtx.destination);
-            
             osc.type = 'sine';
             osc.frequency.setValueAtTime(400, audioCtx.currentTime);
             osc.frequency.exponentialRampToValueAtTime(800, audioCtx.currentTime + 0.08);
-            
             gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
             gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.08);
-            
             osc.start();
             osc.stop(audioCtx.currentTime + 0.08);
         }
@@ -241,35 +251,52 @@
             let gain = audioCtx.createGain();
             osc.connect(gain);
             gain.connect(audioCtx.destination);
-            
             osc.type = 'triangle';
             osc.frequency.setValueAtTime(800, audioCtx.currentTime);
             osc.frequency.exponentialRampToValueAtTime(1400, audioCtx.currentTime + 0.15);
-            
             gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
             gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
-            
             osc.start();
             osc.stop(audioCtx.currentTime + 0.15);
         }
 
-        // ระบบทักทายตามเวลาจริง
+        // 1. ระบบลากนิ้ว/ขยับเมาส์มีดาวรอยตาม
+        let lastTrailTime = 0;
+        document.addEventListener('mousemove', (e) => createTrail(e.clientX, e.clientY));
+        document.addEventListener('touchmove', (e) => {
+            if(e.touches.length > 0) {
+                createTrail(e.touches[0].clientX, e.touches[0].clientY);
+            }
+        });
+
+        function createTrail(x, y) {
+            let now = Date.now();
+            if (now - lastTrailTime < 50) return; // จำกัดความถี่ไม่ให้ดาวรกเกินไป
+            lastTrailTime = now;
+
+            let star = document.createElement('div');
+            star.className = 'trail-star';
+            star.innerHTML = Math.random() > 0.5 ? '✨' : '❄️';
+            star.style.left = (x - 6) + 'px';
+            star.style.top = (y - 6) + 'px';
+            document.body.appendChild(star);
+
+            setTimeout(() => star.remove(), 600);
+        }
+
+        // ระบบทักทายตามเวลาจริง + จับเวลาเริ่มต้น
         const statusText = document.getElementById('statusText');
         const subInstruction = document.getElementById('subInstruction');
         const hour = new Date().getHours();
+        const startTime = Date.now();
         
         let timeGreeting = "จิ้มให้เต็ม...เพื่อไปต่อ";
-        if (hour >= 0 && hour < 5) {
-            timeGreeting = "ดึกมากแล้วนะ นอนยังเนี่ย 🌙";
-        } else if (hour >= 5 && hour < 12) {
-            timeGreeting = "อรุณสวัสดิ์! วันนี้ขอให้สดใสนะ ☀️";
-        } else if (hour >= 12 && hour < 17) {
-            timeGreeting = "ยามบ่ายแล้ว สู้ๆ นะ! ✨";
-        } else if (hour >= 17 && hour < 21) {
-            timeGreeting = "1 ค่ำยามเย็น พักผ่อนกัน 🌆";
-        } else {
-            timeGreeting = "ดึกแล้วยังไม่นอนอีกนะเจ้ามนุษย์ 🌙";
-        }
+        if (hour >= 0 && hour < 5) timeGreeting = "ดึกมากแล้วนะ นอนยังเนี่ย 🌙";
+        else if (hour >= 5 && hour < 12) timeGreeting = "อรุณสวัสดิ์! วันนี้สดใสนะ ☀️";
+        else if (hour >= 12 && hour < 17) timeGreeting = "ยามบ่ายแล้ว สู้ๆ นะ! ✨";
+        else if (hour >= 17 && hour < 21) timeGreeting = "ยามเย็น พักผ่อนกัน 🌆";
+        else timeGreeting = "ดึกแล้วยังไม่นอนอีกนะเจ้ามนุษย์ 🌙";
+        
         statusText.innerText = timeGreeting;
 
         // ระบบสลับธีม Dark / Light Mode
@@ -288,7 +315,7 @@
             }
         });
 
-        // ควบคุมตรรกะการคลิกฟองสบู่และหิมะ
+        // 4. ระบบกดค้าง (Long Press Reaction) + ตัวนับคลิกปกติ
         const interactiveBtn = document.getElementById('interactiveBtn');
         const powerFill = document.getElementById('powerFill');
 
@@ -296,8 +323,27 @@
         const maxPower = 10; 
         let phase = 1; 
         let snowCollected = 0;
+        let holdTimer = null;
 
-        interactiveBtn.addEventListener('click', function() {
+        // รองรับการกดค้างจั๊กจี้
+        interactiveBtn.addEventListener('mousedown', startHold);
+        interactiveBtn.addEventListener('touchstart', startHold);
+        interactiveBtn.addEventListener('mouseup', cancelHold);
+        interactiveBtn.addEventListener('touchend', cancelHold);
+
+        function startHold(e) {
+            if (phase !== 1) return;
+            holdTimer = setTimeout(() => {
+                statusText.innerText = "อ๊ะ... จะกดค้างทำไมเนี่ย จั๊กจี้หน่า! 🤭";
+            }, 800);
+        }
+
+        function cancelHold() {
+            if (holdTimer) clearTimeout(holdTimer);
+        }
+
+        // การคลิกปกติสะสมพลัง
+        interactiveBtn.addEventListener('click', function(e) {
             if (phase !== 1) return; 
 
             playPopSound();
@@ -344,18 +390,21 @@
                         statusText.innerText = 'เกือบครบละ แอบเนียนนะเราอะ ✨';
                     } else if (snowCollected === 3) {
                         phase = 3;
-                        statusText.innerText = 'เก็บครบแล้ว! ไปลุยกันต่อ 🚀';
+                        
+                        // คำนวณเวลาสปีดที่ใช้เล่น
+                        let totalSeconds = ((Date.now() - startTime) / 1000).toFixed(1);
+                        statusText.innerText = `เคลียร์ใน ${totalSeconds} วิ! นิ้วทองคำ ⚡`;
                         subInstruction.innerText = 'กำลังพาไปหน้าไบโอ...';
                         
                         explodeStars();
                         
                         setTimeout(function() {
                             bodyTag.classList.add('fade-out');
-                        }, 500);
+                        }, 600);
 
                         setTimeout(function() {
                             window.location.href = 'bio.html';
-                        }, 1100);
+                        }, 1200);
                     }
                 });
 
