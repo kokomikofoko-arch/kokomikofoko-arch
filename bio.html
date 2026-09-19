@@ -24,7 +24,6 @@
             position: relative;
         }
 
-        /* ธีมสว่างและมืด */
         body.light-theme {
             --bg-color: #f4f8fb;
             --card-bg: #ffffff;
@@ -47,7 +46,6 @@
             --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
         }
 
-        /* เอฟเฟกต์หิมะตกฉากหลังตลอดเวลา */
         .ambient-snow {
             position: absolute;
             top: -20px;
@@ -132,6 +130,7 @@
             box-shadow: 0 4px 10px rgba(0,0,0,0.1);
             font-weight: bold;
             z-index: 15;
+            text-decoration: none;
         }
 
         .music-toggle:hover {
@@ -261,40 +260,15 @@
         </div>
         <div class="click-instruction" id="subInstruction">คลิกที่ฟองสบู่รัวๆ!</div>
 
-        <!-- ปุ่มเปิด/ปิดเพลง ปล่อยดาว (ใช้วิธีฝัง iframe ซ่อนแบบเสถียร) -->
-        <button class="music-toggle" id="musicToggleBtn">
-            <span>🎧</span> <span id="musicStatusText">เปิดเพลง ปล่อยดาว</span>
-        </button>
-    </div>
-
-    <!-- ซ่อนไอเฟรมเพลง YouTube แบบปลอดภัย -->
-    <div id="audioPlayerContainer" style="display:none;">
-        <iframe id="youtubeAudio" width="1" height="1" src="" title="YouTube audio player" frameborder="0" allow="autoplay"></iframe>
+        <!-- ปรับเป็นลิงก์เปิดฟังเพลงบน YouTube โดยตรงแบบชัวร์ๆ -->
+        <a href="https://youtu.be/2fP6OLhBCSQ?si=fLohnPlovAKDEt0l" target="_blank" class="music-toggle" id="musicToggleBtn">
+            <span>🎧</span> <span>ฟังเพลง ปล่อยดาว (YouTube)</span>
+        </a>
     </div>
 
     <div class="footer-text">est. 2026  ·  made with ♡</div>
 
     <script>
-        // ควบคุมเพลงพื้นหลังแบบปลอดภัย
-        const musicToggleBtn = document.getElementById('musicToggleBtn');
-        const musicStatusText = document.getElementById('musicStatusText');
-        const youtubeAudio = document.getElementById('youtubeAudio');
-        let isMusicPlaying = false;
-
-        musicToggleBtn.addEventListener('click', function(e) {
-            e.stopPropagation(); // ป้องกันไม่ให้คลิกทะลุไปโดนการ์ด
-            if (!isMusicPlaying) {
-                // ใส่ autoplay=1 เพื่อให้เพลงเล่นทันทีเมื่อกด
-                youtubeAudio.src = "https://www.youtube.com/embed/2fP6OLhBCSQ?autoplay=1&loop=1&playlist=2fP6OLhBCSQ";
-                musicStatusText.innerText = 'ปิดเพลง 🎵';
-                isMusicPlaying = true;
-            } else {
-                youtubeAudio.src = ""; // ปิดเพลงโดยการเคลียร์ src
-                musicStatusText.innerText = 'เปิดเพลง ปล่อยดาว';
-                isMusicPlaying = false;
-            }
-        });
-
         // ระบบสร้างหิมะโปรยฉากหลังตลอดเวลา
         function createAmbientSnow() {
             const snow = document.createElement('div');
@@ -311,7 +285,7 @@
         }
         setInterval(createAmbientSnow, 400);
 
-        // ระบบเสียงเอฟเฟกต์สังเคราะห์ (Web Audio API)
+        // ระบบเสียงเอฟเฟกต์ (Web Audio API)
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         
         function playPopSound() {
@@ -418,7 +392,6 @@
             }
         });
 
-        // ดับเบิลคลิกเพื่อเปิดโหมดพายุหิมะลับ
         welcomeCard.addEventListener('dblclick', function() {
             triggerBlizzardStorm();
         });
