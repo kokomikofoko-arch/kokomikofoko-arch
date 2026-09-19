@@ -103,6 +103,7 @@
             box-shadow: 0 3px 10px rgba(0, 119, 182, 0.3);
         }
 
+        /* ปุ่มสลับธีม (มุมซ้ายบน) */
         .theme-toggle {
             position: absolute;
             top: -12px;
@@ -119,6 +120,32 @@
             align-items: center;
             cursor: pointer;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        /* ปุ่มเปิด-ปิดเพลง (มุมขวาล่างของการ์ด หรือตำแหน่งเก๋ๆ) */
+        .music-toggle {
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--card-bg);
+            border: 2px solid var(--tag-bg);
+            color: var(--text-color);
+            font-size: 11px;
+            padding: 4px 14px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            font-weight: bold;
+            z-index: 15;
+        }
+
+        .music-toggle:hover {
+            background: var(--tag-bg);
+            color: #fff;
         }
 
         .main-icon {
@@ -217,7 +244,6 @@
             }
         }
 
-        /* เอฟเฟกต์พายุหิมะหมุนวน (เมื่อดับเบิลคลิก) */
         .blizzard-storm {
             position: absolute;
             font-size: 24px;
@@ -241,6 +267,11 @@
             opacity: 0;
             transition: opacity 0.6s ease;
         }
+
+        /* ซ่อน YouTube Player ไม่ให้เกะกะหน้าจอ */
+        #youtube-player-container {
+            display: none;
+        }
     </style>
 </head>
 <body class="light-theme">
@@ -248,18 +279,71 @@
     <div class="welcome-card" id="welcomeCard">
         <button class="theme-toggle" id="themeToggleBtn" title="เปลี่ยนธีม">🌙</button>
         <div class="card-tag">WELCOME</div>
+        
         <span class="main-icon" id="interactiveBtn" title="ระวังมันหนีนะ!">🫧</span>
         <div class="text" id="statusText">กำลังโหลดเวลา...</div>
         <div class="power-meter-container">
             <div class="power-meter-fill" id="powerFill"></div>
         </div>
         <div class="click-instruction" id="subInstruction">คลิกที่ฟองสบู่รัวๆ!</div>
+
+        <!-- ปุ่มเปิด/ปิดเพลง ปล่อยดาว (YEW) -->
+        <button class="music-toggle" id="musicToggleBtn">
+            <span>🎧</span> <span id="musicStatusText">เปิดเพลง ปล่อยดาว</span>
+        </button>
+    </div>
+
+    <!-- YouTube IFrame API สำหรับเล่นเพลงพื้นหลัง -->
+    <div id="youtube-player-container">
+        <div id="player"></div>
     </div>
 
     <div class="footer-text">est. 2026  ·  made with ♡</div>
 
     <script>
-        // ระบบสร้างหิมะโปรยฉากหลังตลอดเวลา (กิมมิค 1)
+        // โหลด YouTube IFrame API
+        var tag = document.createElement('script');
+        tag.src = "https://www.youtube.com/iframe_api";
+        var firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+        var player;
+        function onYouTubeIframeAPIReady() {
+            player = new YT.Player('player', {
+                height: '0',
+                width: '0',
+                videoId: '2fP6OLhBCSQ', // รหัสวิดีโอเพลง ปล่อยดาว | Flaw - YEW
+                playerVars: {
+                    'autoplay': 0,
+                    'loop': 1,
+                    'playlist': '2fP6OLhBCSQ'
+                }
+            });
+        }
+
+        // ควบคุมปุ่มเปิด-ปิดเพลง
+        const musicToggleBtn = document.getElementById('musicToggleBtn');
+        const musicStatusText = document.getElementById('musicStatusText');
+        let isMusicPlaying = false;
+
+        musicToggleBtn.addEventListener('click', function() {
+            if (!player || typeof player.playVideo !== 'function') {
+                alert('กำลังโหลดเพลง รอสักครู่นะครับ...');
+                return;
+            }
+
+            if (!isMusicPlaying) {
+                player.playVideo();
+                musicStatusText.innerText = 'ปิดเพลง 🎵';
+                isMusicPlaying = true;
+            } else {
+                player.pauseVideo();
+                musicStatusText.innerText = 'เปิดเพลง ปล่อยดาว';
+                isMusicPlaying = false;
+            }
+        });
+
+        // ระบบสร้างหิมะโปรยฉากหลังตลอดเวลา
         function createAmbientSnow() {
             const snow = document.createElement('div');
             snow.className = 'ambient-snow';
@@ -381,7 +465,7 @@
             }
         });
 
-        // กิมมิค 4: ปุ่มวิ่งหนีแกล้งคนใจร้อน (ขยับหนีเมาส์นิดๆ ตอนกำลังสะสมพลัง)
+        // ปุ่มวิ่งหนีแกล้งคนใจร้อน
         interactiveBtn.addEventListener('mousemove', function() {
             if (phase !== 1) return;
             const randomX = (Math.random() - 0.5) * 12;
@@ -393,7 +477,7 @@
             interactiveBtn.style.transform = 'translate(0px, 0px)';
         });
 
-        // กิมมิค 3: ดับเบิลคลิกที่การ์ดเพื่อเปิดโหมดพายุหิมะลับ (Easter Egg)
+        // ดับเบิลคลิกเพื่อเปิดโหมดพายุหิมะลับ
         welcomeCard.addEventListener('dblclick', function() {
             triggerBlizzardStorm();
         });
@@ -493,11 +577,4 @@
                 document.body.appendChild(star);
 
                 setTimeout(() => {
-                    star.remove();
-                }, 1000);
-            }
-        }
-    </script>
-
-</body>
-</html>
+        
