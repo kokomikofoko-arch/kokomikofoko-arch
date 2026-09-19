@@ -111,6 +111,26 @@
             z-index: 10;
         }
 
+        /* สไตล์เกล็ดหิมะที่กระจัดกระจายให้ออกมาจิ้ม */
+        .scattered-snow {
+            position: absolute;
+            font-size: 32px;
+            cursor: pointer;
+            z-index: 20;
+            animation: floatSlow 2s ease-in-out infinite alternate;
+            filter: drop-shadow(0 4px 8px rgba(0,119,182,0.2));
+            transition: transform 0.2s, opacity 0.2s;
+        }
+
+        .scattered-snow:hover {
+            transform: scale(1.3);
+        }
+
+        @keyframes floatSlow {
+            0% { transform: translateY(0px) rotate(0deg); }
+            100% { transform: translateY(-8px) rotate(15deg); }
+        }
+
         .exploding-star {
             position: absolute;
             font-size: 20px;
@@ -138,7 +158,7 @@
 </head>
 <body>
 
-    <div class="welcome-card">
+    <div class="welcome-card" id="welcomeCard">
         <div class="card-tag">WELCOME</div>
         <span class="main-icon" id="interactiveBtn">🫧</span>
         <div class="text" id="statusText">จิ้มให้เต็ม...เพื่อไปต่อ</div>
@@ -158,52 +178,84 @@
         const body = document.body;
 
         let currentClick = 0;
-        const totalSteps = 13; // 10 รอบฟองสบู่ + 3 รอบหิมะกวนๆ
-        let isCompleted = false;
+        const maxPower = 10; 
+        let phase = 1; // เฟส 1: กดฟองสบู่, เฟส 2: เก็บหิมะ 3 ดวง, เฟส 3: สำเร็จ
+        let snowCollected = 0;
 
         interactiveBtn.addEventListener('click', function() {
-            if (isCompleted) return;
+            if (phase !== 1) return; // ถ้าเข้าสู่เฟสเก็บหิมะแล้ว ปุ่มหลักจะถูกล็อคชั่วคราว
 
             interactiveBtn.classList.add('active');
             setTimeout(() => interactiveBtn.classList.remove('active'), 100);
 
             currentClick++;
-
-            // คำนวณหลอดพลัง (คิดจาก 10 ขั้นแรก)
-            let fillProgress = Math.min(currentClick, 10) / 10 * 100;
+            let fillProgress = (currentClick / maxPower) * 100;
             powerFill.style.width = fillProgress + '%';
 
-            // จัดการข้อความตามสเต็ป
-            if (currentClick <= 10) {
-                statusText.innerText = `จิ้มให้เต็ม...เพื่อไปต่อ (${currentClick}/10)`;
-                if (currentClick === 10) {
-                    // เปลี่ยนร่างเป็นเกล็ดหิมะ ❄️ เข้าสู่ 3 รอบสุดท้าย
-                    interactiveBtn.innerText = '❄️';
-                    statusText.innerText = 'เอ๊ะ เกือบละ... ขออีกนิดนึงน่า';
-                    subInstruction.innerText = 'เก็บเกล็ดหิมะแรกกัน!';
-                }
-            } else if (currentClick === 11) {
-                statusText.innerText = 'แหน่... ยังไม่ยอมให้ไปหรอก 🤭';
-                subInstruction.innerText = 'กดอีกรอบสิ เจ้ามนุษย์!';
-            } else if (currentClick === 12) {
-                statusText.innerText = 'แกล้งเฉยๆ หรอกหน่า อีกทีๆ ✨';
-                subInstruction.innerText = 'ครั้งสุดท้ายจริงๆ แล้ว!';
-            } else if (currentClick >= 13) {
-                isCompleted = true;
-                statusText.innerText = 'ปิ๊ง! ไปลุยกันเลย 🚀';
-                subInstruction.innerText = 'กำลังพาไปหน้าไบโอ...';
-                
-                explodeStars();
-                
-                setTimeout(function() {
-                    body.classList.add('fade-out');
-                }, 500);
+            statusText.innerText = `จิ้มให้เต็ม...เพื่อไปต่อ (${currentClick}/10)`;
 
-                setTimeout(function() {
-                    window.location.href = 'bio.html';
-                }, 1100);
+            // เมื่อกดครบ 10 ครั้ง ให้หยุดแล้วเข้าสู่เฟสเกล็ดหิมะกระจาย
+            if (currentClick >= maxPower) {
+                phase = 2;
+                interactiveBtn.innerText = '❄️';
+                statusText.innerText = 'เอ๊ะ! มีเกล็ดหิมะหล่นมา 3 ดวง 🧊';
+                subInstruction.innerText = 'จิ้มเก็บหิมะรอบๆ หน้าจอให้ครบสิ!';
+                spawnSnowflakes();
             }
         });
+
+        // ฟังก์ชันสร้างเกล็ดหิมะกระจายรอบหน้าจอ 3 ดวง
+        function spawnSnowflakes() {
+            // ตำแหน่งสุ่มรอบๆ การ์ดหลัก (ไม่ให้ทับกับการ์ดตรงกลางเกินไป)
+            const positions = [
+                { top: '20%', left: '15%' },
+                { top: '70%', left: '80%' },
+                { top: '25%_custom', left: '75%' }
+            ];
+
+            // พิกัดสุ่มปลอดภัยรอบจอ
+            const coords = [
+                { x: '18vw', y: '25vh' },
+                { x: '75vw', y: '70vh' },
+                { x: '78vw', y: '22vh' }
+            ];
+
+            coords.forEach((pos, index) => {
+                let snow = document.createElement('div');
+                snow.className = 'scattered-snow';
+                snow.innerHTML = '❄️';
+                snow.style.left = pos.x;
+                snow.style.top = pos.y;
+
+                snow.addEventListener('click', function() {
+                    snow.remove();
+                    snowCollected++;
+
+                    if (snowCollected === 1) {
+                        statusText.innerText = 'เก่งมาก เหลืออีก 2 ดวง 🤭';
+                    } else if (snowCollected === 2) {
+                        statusText.innerText = 'เกือบครบละ แอบเนียนนะเราอะ ✨';
+                    } else if (snowCollected === 3) {
+                        // ครบ 3 ดวง ปลดล็อกสำเร็จ!
+                        phase = 3;
+                        statusText.innerText = 'เก็บครบแล้ว! ไปลุยกันต่อ 🚀';
+                        subInstruction.innerText = 'กำลังพาไปหน้าไบโอ...';
+                        
+                        explodeStars();
+                        
+                        setTimeout(function() {
+                            body.classList.add('fade-out');
+                        }, 500);
+
+                        setTimeout(function() {
+                            window.location.href = 'bio.html';
+                        }, 1100);
+                    }
+                });
+
+                document.body.appendChild(snow);
+            });
+        }
 
         function explodeStars() {
             const cardRect = interactiveBtn.getBoundingClientRect();
