@@ -199,7 +199,7 @@
             cursor: pointer;
             border: none;
             box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             -webkit-tap-highlight-color: transparent;
         }
 
@@ -227,6 +227,7 @@
             cursor: pointer;
             user-select: none;
             -webkit-tap-highlight-color: transparent;
+            transition: all 0.5s ease;
         }
 
         .pet-speech-bubble {
@@ -292,6 +293,19 @@
             100% { transform: translate(var(--tx), var(--ty)) scale(0.1) rotate(720deg); opacity: 0; }
         }
 
+        .floating-emoji {
+            position: fixed;
+            font-size: 24px;
+            pointer-events: none;
+            z-index: 100;
+            animation: floatEmojiUp 1s ease-out forwards;
+        }
+
+        @keyframes floatEmojiUp {
+            0% { transform: translateY(0) scale(0.5); opacity: 1; }
+            100% { transform: translateY(-80px) scale(1.2); opacity: 0; }
+        }
+
         body.fade-out {
             opacity: 0;
             transition: opacity 0.6s ease;
@@ -328,21 +342,21 @@
     <div class="footer-text">est. 2026  ·  made with ♡</div>
 
     <script>
+        // 1. หิมะโปรยฉากหลัง
         function createAmbientSnow() {
             const snow = document.createElement('div');
             snow.className = 'ambient-snow';
             snow.innerHTML = Math.random() > 0.5 ? '❄️' : '✨';
             snow.style.left = Math.random() * 100 + 'vw';
             snow.style.fontSize = (12 + Math.random() * 16) + 'px';
-            
             const duration = 4 + Math.random() * 6;
             snow.style.animationDuration = duration + 's';
-            
             document.body.appendChild(snow);
             setTimeout(() => snow.remove(), duration * 1000);
         }
         setInterval(createAmbientSnow, 400);
 
+        // ระบบเสียงป๊อป
         let audioCtx = null;
         function initAudio() {
             if (!audioCtx) {
@@ -360,40 +374,31 @@
                 let gain = audioCtx.createGain();
                 osc.connect(gain);
                 gain.connect(audioCtx.destination);
-                
                 osc.type = 'sine';
                 osc.frequency.setValueAtTime(400, audioCtx.currentTime);
                 osc.frequency.exponentialRampToValueAtTime(800, audioCtx.currentTime + 0.08);
-                
                 gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
                 gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.08);
-                
                 osc.start();
                 osc.stop(audioCtx.currentTime + 0.08);
             } catch (e) {}
         }
 
+        // ทักทายตามเวลา
         const statusText = document.getElementById('statusText');
         const subInstruction = document.getElementById('subInstruction');
         const hour = new Date().getHours();
-        
         let timeGreeting = "จิ้มให้เต็ม...เพื่อไปต่อ";
-        if (hour >= 0 && hour < 5) {
-            timeGreeting = "ดึกมากแล้วนะ นอนยังเนี่ย 🌙";
-        } else if (hour >= 5 && hour < 12) {
-            timeGreeting = "อรุณสวัสดิ์! วันนี้ขอให้สดใสนะ ☀️";
-        } else if (hour >= 12 && hour < 17) {
-            timeGreeting = "ยามบ่ายแล้ว สู้ๆ นะ! ✨";
-        } else if (hour >= 17 && hour < 21) {
-            timeGreeting = "ค่ำแล้ว พักผ่อนกัน 🌆";
-        } else {
-            timeGreeting = "ดึกแล้วยังไม่นอนอีกนะเจ้ามนุษย์ 🌙";
-        }
+        if (hour >= 0 && hour < 5) timeGreeting = "ดึกมากแล้วนะ นอนยังเนี่ย 🌙";
+        else if (hour >= 5 && hour < 12) timeGreeting = "อรุณสวัสดิ์! วันนี้ขอให้สดใสนะ ☀️";
+        else if (hour >= 12 && hour < 17) timeGreeting = "ยามบ่ายแล้ว สู้ๆ นะ! ✨";
+        else if (hour >= 17 && hour < 21) timeGreeting = "ค่ำแล้ว พักผ่อนกัน 🌆";
+        else timeGreeting = "ดึกแล้วยังไม่นอนอีกนะเจ้ามนุษย์ 🌙";
         statusText.innerText = timeGreeting;
 
+        // เปลี่ยนธีม
         const themeToggleBtn = document.getElementById('themeToggleBtn');
         const bodyTag = document.body;
-
         themeToggleBtn.addEventListener('click', function(e) {
             e.stopPropagation();
             if (bodyTag.classList.contains('light-theme')) {
@@ -407,16 +412,15 @@
             }
         });
 
+        // น้องต่ายพูดคุย & กิมมิคที่ 3: ต่ายขโมยเคอร์เซอร์ (หรือวิ่งหนีเมื่อเข้าใกล้)
         const petBox = document.getElementById('petBox');
         const petSpeech = document.getElementById('petSpeech');
         const petAvatar = document.getElementById('petAvatar');
-        
         const petLines = [
             "สวัสดีเจ้ามนุษย์! 🐾",
             "Faber est quisque fortunae suae ✨",
             "อย่าลืมกดฟองสบู่ข้างบนน้า 🫧",
-            "Privet! ทักทายแบบรัสเซีย 😎",
-            "Konnichiwa! ยินดีต้อนรับจ้า 🌸",
+            "ระวังเมาส์หายนะ ฮ่าๆๆ 😼",
             "แอบขี้เกียจอยู่รึเปล่าเนี่ย 🤭"
         ];
 
@@ -429,6 +433,21 @@
             }, 200);
         });
 
+        // กิมมิคต่ายแกล้งวิ่งหนีเคอร์เซอร์เมาส์เบาๆ ถ้าเอาเมาส์เข้าใกล้
+        document.addEventListener('mousemove', function(e) {
+            const rect = petBox.getBoundingClientRect();
+            const dx = e.clientX - (rect.left + rect.width / 2);
+            const dy = e.clientY - (rect.top + rect.height / 2);
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist < 80) {
+                const rx = (Math.random() - 0.5) * 120;
+                const ry = (Math.random() - 0.5) * 60;
+                petBox.style.transform = `translate(${rx}px, ${ry}px)`;
+                petSpeech.innerText = 'อุ๊y! เกือบโดนจับแล้ว 🏃‍♂️';
+            }
+        });
+
+        // เกมหลัก: ฟองสบู่ -> เก็บหิมะ
         const interactiveBtn = document.getElementById('interactiveBtn');
         const powerFill = document.getElementById('powerFill');
         const welcomeCard = document.getElementById('welcomeCard');
@@ -453,8 +472,10 @@
             currentClick++;
             let fillProgress = (currentClick / maxPower) * 100;
             powerFill.style.width = fillProgress + '%';
-
             statusText.innerText = `สะสมพลัง (${currentClick}/10)`;
+
+            // กิมมิคที่ 1: โยนอีโมจิป่วนจอทุกๆ การคลิกฟองสบู่
+            spawnFloatingEmoji(e.clientX || window.innerWidth/2, e.clientY || window.innerHeight/2);
 
             if (currentClick >= maxPower) {
                 phase = 2;
@@ -465,6 +486,17 @@
                 spawnSnowflakes();
             }
         });
+
+        function spawnFloatingEmoji(x, y) {
+            const emojis = ['✨', '💥', '🫧', '💖', '⭐', '🎈'];
+            let em = document.createElement('div');
+            em.className = 'floating-emoji';
+            em.innerHTML = emojis[Math.floor(Math.random() * emojis.length)];
+            em.style.left = (x - 12) + 'px';
+            em.style.top = (y - 12) + 'px';
+            document.body.appendChild(em);
+            setTimeout(() => em.remove(), 1000);
+        }
 
         function spawnSnowflakes() {
             const coords = [
@@ -484,6 +516,7 @@
                     e.preventDefault();
                     snow.remove();
                     snowCollected++;
+                    spawnFloatingEmoji(e.clientX, e.clientY);
 
                     if (snowCollected === 1) {
                         statusText.innerText = 'เก่งมาก เหลืออีก 2 ดวง 🤭';
@@ -503,7 +536,6 @@
                         explodeStars();
                     }
                 });
-
                 document.body.appendChild(snow);
             });
         }
@@ -521,59 +553,13 @@
             }, 500);
         });
 
+        // กิมมิคที่ 2: ปุ่มหนีเมาส์แบบวาร์ปป่วนๆ เลเวลอัพ
         btnWant.addEventListener('pointerdown', function(e) {
             e.preventDefault();
             if (runAwayCount < maxRunAway) {
                 runAwayCount++;
                 playPopSound();
+                spawnFloatingEmoji(e.clientX, e.clientY);
 
-                const randomX = (Math.random() - 0.5) * 160;
-                const randomY = (Math.random() - 0.5) * 50;
-                
-                btnWant.style.transform = `translate(${randomX}px, ${randomY}px)`;
-                
-                const teasingLines = [
-                    "แหนะ จับไม่ได้หรอก 😜",
-                    "อี๋ เร็วอีกนิดสิ! 🏃‍♂️",
-                    "เกือบโดนแล้วนะ ฮ่าๆๆ ✨",
-                    "ใจเย็นๆ ค่อยๆ จิ้ม 🤭",
-                    "รอบสุดท้ายแล้วนะ เตรียมตัว! 🚀"
-                ];
-                petSpeech.innerText = teasingLines[runAwayCount - 1];
-            } else {
-                petSpeech.innerText = 'ยอมแล้ว ไปดูกันเลย! 🚀';
-                bodyTag.classList.add('fade-out');
-                setTimeout(function() {
-                    window.location.href = 'bio.html';
-                }, 600);
-            }
-        });
-
-        function explodeStars() {
-            const cardRect = welcomeCard.getBoundingClientRect();
-            const centerX = cardRect.left + cardRect.width / 2;
-            const centerY = cardRect.top + cardRect.height / 2;
-
-            for (let i = 0; i < 25; i++) {
-                let star = document.createElement('div');
-                star.className = 'exploding-star';
-                star.innerHTML = '✨';
-
-                const angle = Math.random() * Math.PI * 2;
-                const distance = 80 + Math.random() * 100;
-                const tx = Math.cos(angle) * distance;
-                const ty = Math.sin(angle) * distance;
-
-                star.style.setProperty('--tx', `${tx}px`);
-                star.style.setProperty('--ty', `${ty}px`);
-                star.style.left = centerX - 10 + 'px';
-                star.style.top = centerY - 10 + 'px';
-                star.style.animationDuration = (0.6 + Math.random() * 0.4) + 's';
-
-                document.body.appendChild(star);
-                setTimeout(() => star.remove(), 1000);
-            }
-        }
-    </script>
-</body>
-</html>
+                // สุ่มกระโดดวาร์ปแบบไกลขึ้นและคาดเดายากขึ้น
+                const randomX = (Math.random() - 0.5) * 220
